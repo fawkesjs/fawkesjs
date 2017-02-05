@@ -1,5 +1,6 @@
 "use strict";
 var validator = require("validator");
+var _ = require("underscore");
 var ref_1 = require("../ref");
 var numberTypes = ["integer", "number"];
 function isInt(n) {
@@ -70,6 +71,30 @@ function verifyArg(v, de, fmt) {
     }
     return errs;
 }
+function verifyBodySchema(body, schema) {
+    var errs = [];
+    var arg = {};
+    var properties = schema.properties || [];
+    if (schema.required) {
+        for (var i = 0; i < schema.required.length; i++) {
+            var prop = schema.required[i];
+            if (typeof body[prop] === 'undefined') {
+                errs.push({ field: prop, type: "required" });
+            }
+        }
+        for (var prop in properties) {
+            if (typeof body[prop] === 'undefined') {
+                continue;
+            }
+            arg[prop] = body[prop];
+            // since is using json, we dont do type convertion here
+            // should use another function, probably
+            properties[prop].name = prop;
+            errs = errs.concat(verifyArg(body[prop], body[prop], properties[prop]));
+        }
+    }
+    return { arg: arg, errs: errs };
+}
 var RestMiddleware = (function () {
     function RestMiddleware() {
     }
@@ -82,25 +107,33 @@ var RestMiddleware = (function () {
             var errs = [];
             if (route.parameters) {
                 for (var i = 0; i < route.parameters.length; i++) {
-                    var tmp = route.parameters[i];
+                    var param = route.parameters[i];
                     var q = void 0, de = void 0;
-                    if (tmp.in === 'path' && typeof (req.params[tmp.name]) !== 'undefined') {
-                        de = req.params[tmp.name];
-                        arg[tmp.name] = convertion(de, tmp);
+                    if (param.in === 'path' && typeof (req.params[param.name]) !== 'undefined') {
+                        de = req.params[param.name];
+                        arg[param.name] = convertion(de, param);
                     }
-                    if (tmp.in === 'query' && typeof (req.query[tmp.name]) !== 'undefined') {
-                        de = req.query[tmp.name];
-                        arg[tmp.name] = convertion(de, tmp);
+                    if (param.in === 'query' && typeof (req.query[param.name]) !== 'undefined') {
+                        de = req.query[param.name];
+                        arg[param.name] = convertion(de, param);
                     }
-                    if (tmp.in === 'formData' && typeof (req.body[tmp.name]) !== 'undefined') {
-                        de = req.body[tmp.name];
-                        arg[tmp.name] = convertion(de, tmp);
+                    if (param.in === 'formData' && typeof (req.body[param.name]) !== 'undefined') {
+                        de = req.body[param.name];
+                        arg[param.name] = convertion(de, param);
                     }
-                    if (tmp.in === 'body') {
-                        arg = req.body;
+                    if (param.in === 'body') {
+                        // if dont define properties, use req.body in controller
+                        if (param.required && typeof req.body === 'undefined') {
+                            errs.push({ field: param.name, type: 'required' });
+                        }
+                        else if (param.schema && param.schema.properties) {
+                            var tmp = verifyBodySchema(req.body, param.schema);
+                            _.extend(arg, tmp.arg);
+                            errs = errs.concat(tmp.errs);
+                        }
                         continue;
                     }
-                    errs = errs.concat(verifyArg(arg[tmp.name], de, tmp));
+                    errs = errs.concat(verifyArg(arg[param.name], de, param));
                 }
             }
             if (errs.length) {

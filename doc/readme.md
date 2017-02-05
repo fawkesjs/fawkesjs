@@ -13,6 +13,8 @@
 - src/config/config.{env}.ts: this is place for main config to overwrite for specific environment
 - src/config/datasource.ts: this is place for datasource config, `db` is the main database to use
 - src/config/datasource.{env}.ts: this is place for datasource config to overwrite for specific environment
+- src/config/swagger.ts: this is place for swagger config
+- src/config/swagger.{env}.ts: this is place for swagger config to overwrite for specific environment
 - src/controller/: this is place for controller (which should not have business logic)
 - src/middleware/index.ts: `preCtrls` will be the middleware to use between the app routing and the main controller, sequence is important here
 - src/model/: this is where your model should be at
@@ -33,7 +35,9 @@
 - `IRoute.func`: Controller function to use with this route, the controller should contain a parameter in `ICtrl` type
 - `IRoute.acl?`: use with `fawkesjs-starter/src/module/acl` middleware
 - `IRoute.swagger?`: to overwrite the default swagger config/ parameters of the route
-- `IRoute.parameters?`: type of `IRouteParameters`, which is swagger parameters, support required, strlen, min/max number, string/uuid checking
+- `IRoute.parameters?`:
+  - type of `IRouteParameters`, which is swagger parameters, support required, strlen, min/max number, string/uuid checking
+  - (RestMiddleware.processArgAsync) To use in `body` type parameter, the schema cannot be using `$ref`, only support type `object` at the moment
 
 ## src/controller
 - `ICtrl.req`: express.Request,
