@@ -61,6 +61,15 @@ export class Fawkes {
         }
       }
     }
+    let env = process.env.NODE_ENV || "development"
+    for (let o of Config.globFiles(Config.outDir + Config.configDir + '/swagger' + Config.extension)) {
+      let tmp = require(path.resolve(o))
+      _.extend(sj, tmp)
+    }
+    for (let o of Config.globFiles(Config.outDir + Config.configDir + '/swagger.' + env + Config.extension)) {
+      let tmp = require(path.resolve(o))
+      _.extend(sj, tmp)
+    }
     for (let route of Config.globFiles(preRoute + '/**' + postRoute)) {
       let theRoute = require(path.resolve(route))
       route = route.substring(preRoute.length)

@@ -1,7 +1,6 @@
 "use strict";
 var validator = require("validator");
 var ref_1 = require("../ref");
-var stringTypes = ["email", "uuid", "string", "password"];
 var numberTypes = ["integer", "number"];
 function isInt(n) {
     return n % 1 === 0;
@@ -23,6 +22,54 @@ function convertion(q, tmp) {
     }
     return q;
 }
+function verifyArg(v, de, fmt) {
+    var errs = [];
+    if (fmt.default && typeof v === 'undefined') {
+        v = fmt.default;
+    }
+    if (fmt.required && typeof v === 'undefined') {
+        errs.push({ field: fmt.name, type: "required" });
+    }
+    if (typeof v === 'undefined') {
+        return errs;
+    }
+    var lengthOpt = {
+        min: fmt.minLength ? fmt.minLength : 0,
+        max: fmt.maxLength ? fmt.maxLength : undefined
+    };
+    if (fmt.type === 'string') {
+        if (typeof v !== 'string') {
+            errs.push({ field: fmt.name, type: "string" });
+        }
+        else if (fmt.format === 'uuid' && !validator.isUUID(v)) {
+            errs.push({ field: fmt.name, type: "uuid" });
+        }
+        else if (!validator.isLength(v, lengthOpt)) {
+            errs.push({ field: fmt.name, type: "strlen" });
+        }
+    }
+    if (numberTypes.indexOf(fmt.type) !== -1) {
+        if (typeof v !== 'number') {
+            errs.push({ field: fmt.name, type: "number" });
+        }
+        else if (v != de) {
+            errs.push({ field: fmt.name, type: fmt.type });
+        }
+        else if (!isInt(v)) {
+            errs.push({ field: fmt.name, type: "integer" });
+        }
+        else if (typeof fmt.maximum !== 'undefined' && v > fmt.maximum) {
+            errs.push({ field: fmt.name, type: "maximum" });
+        }
+        else if (typeof fmt.minimum !== 'undefined' && v < fmt.minimum) {
+            errs.push({ field: fmt.name, type: "minimum" });
+        }
+    }
+    if (fmt.type === 'boolean' && typeof v !== 'boolean') {
+        errs.push({ field: fmt.name, type: "boolean" });
+    }
+    return errs;
+}
 var RestMiddleware = (function () {
     function RestMiddleware() {
     }
@@ -36,72 +83,24 @@ var RestMiddleware = (function () {
             if (route.parameters) {
                 for (var i = 0; i < route.parameters.length; i++) {
                     var tmp = route.parameters[i];
+                    var q = void 0, de = void 0;
                     if (tmp.in === 'path' && typeof (req.params[tmp.name]) !== 'undefined') {
-                        var q = convertion(req.params[tmp.name], tmp);
-                        if (numberTypes.indexOf(tmp.type) !== -1 && q != req.params[tmp.name]) {
-                            errs.push({ field: tmp.name, type: tmp.type });
-                        }
-                        arg[tmp.name] = q;
+                        de = req.params[tmp.name];
+                        arg[tmp.name] = convertion(de, tmp);
                     }
                     if (tmp.in === 'query' && typeof (req.query[tmp.name]) !== 'undefined') {
-                        var q = convertion(req.query[tmp.name], tmp);
-                        if (numberTypes.indexOf(tmp.type) !== -1 && q != req.query[tmp.name]) {
-                            errs.push({ field: tmp.name, type: tmp.type });
-                        }
-                        arg[tmp.name] = q;
+                        de = req.query[tmp.name];
+                        arg[tmp.name] = convertion(de, tmp);
                     }
                     if (tmp.in === 'formData' && typeof (req.body[tmp.name]) !== 'undefined') {
-                        var q = convertion(req.body[tmp.name], tmp);
-                        if (numberTypes.indexOf(tmp.type) !== -1 && q != req.body[tmp.name]) {
-                            errs.push({ field: tmp.name, type: tmp.type });
-                        }
-                        arg[tmp.name] = q;
+                        de = req.body[tmp.name];
+                        arg[tmp.name] = convertion(de, tmp);
                     }
                     if (tmp.in === 'body') {
                         arg = req.body;
                         continue;
                     }
-                    var v = arg[tmp.name];
-                    if (tmp.default && typeof v === 'undefined') {
-                        v = tmp.default;
-                    }
-                    if (tmp.required && typeof v === 'undefined') {
-                        errs.push({ field: tmp.name, type: "required" });
-                    }
-                    if (typeof v !== 'undefined') {
-                        var lengthOpt = {
-                            min: tmp.minLength ? 0 : tmp.minLength,
-                            max: tmp.maxLength ? undefined : tmp.maxLength
-                        };
-                        if (stringTypes.indexOf(tmp.type) !== -1) {
-                            if (typeof v !== 'string') {
-                                errs.push({ field: tmp.name, type: "string" });
-                            }
-                            else if (tmp.type === 'uuid' && !validator.isUUID(v)) {
-                                errs.push({ field: tmp.name, type: "uuid" });
-                            }
-                            else if (!validator.isLength(v, lengthOpt)) {
-                                errs.push({ field: tmp.name, type: "strlen" });
-                            }
-                        }
-                        if (numberTypes.indexOf(tmp.type) !== -1) {
-                            if (typeof v !== 'number') {
-                                errs.push({ field: tmp.name, type: "number" });
-                            }
-                            else if (!isInt(v)) {
-                                errs.push({ field: tmp.name, type: "integer" });
-                            }
-                            else if (typeof tmp.maximum !== 'undefined' && v > tmp.maximum) {
-                                errs.push({ field: tmp.name, type: "maximum" });
-                            }
-                            else if (typeof tmp.minimum !== 'undefined' && v < tmp.minimum) {
-                                errs.push({ field: tmp.name, type: "minimum" });
-                            }
-                        }
-                        if (tmp.type === 'boolean' && typeof v !== 'boolean') {
-                            errs.push({ field: tmp.name, type: "boolean" });
-                        }
-                    }
+                    errs = errs.concat(verifyArg(arg[tmp.name], de, tmp));
                 }
             }
             if (errs.length) {

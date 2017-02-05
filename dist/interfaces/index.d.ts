@@ -32,7 +32,7 @@ export interface IRouteParameter {
     required?: boolean;
     type: string;
     format?: string;
-    schema?: string;
+    schema?: any;
     items?: any;
     collectionFormat?: string;
     default?: any;

@@ -62,8 +62,19 @@ var Fawkes = (function () {
                 }
             }
         };
-        for (var _i = 0, _a = config_1.Config.globFiles(preRoute + '/**' + postRoute); _i < _a.length; _i++) {
-            var route = _a[_i];
+        var env = process.env.NODE_ENV || "development";
+        for (var _i = 0, _a = config_1.Config.globFiles(config_1.Config.outDir + config_1.Config.configDir + '/swagger' + config_1.Config.extension); _i < _a.length; _i++) {
+            var o = _a[_i];
+            var tmp = require(path.resolve(o));
+            _.extend(sj, tmp);
+        }
+        for (var _b = 0, _c = config_1.Config.globFiles(config_1.Config.outDir + config_1.Config.configDir + '/swagger.' + env + config_1.Config.extension); _b < _c.length; _b++) {
+            var o = _c[_b];
+            var tmp = require(path.resolve(o));
+            _.extend(sj, tmp);
+        }
+        for (var _d = 0, _e = config_1.Config.globFiles(preRoute + '/**' + postRoute); _d < _e.length; _d++) {
+            var route = _e[_d];
             var theRoute = require(path.resolve(route));
             route = route.substring(preRoute.length);
             route = route.substring(route.length - postRoute.length, -1);

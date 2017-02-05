@@ -22,17 +22,21 @@ export class Config {
 }
 if (!Config.init) {
   let env = process.env.NODE_ENV || "development"
-  let baseConfig = require(path.resolve(Config.outDir + Config.configDir + '/config' + Config.extension))
-  _.extend(Config, baseConfig)
-  for (let config of Config.globFiles(Config.outDir + Config.configDir + '/config.' + env + Config.extension)) {
-    let conf = require(path.resolve(config))
-    _.extend(Config, conf)
+  for (let o of Config.globFiles(Config.outDir + Config.configDir + '/config' + Config.extension)) {
+    let tmp = require(path.resolve(o))
+    _.extend(Config, tmp)
   }
-  let baseDatasource = require(path.resolve(Config.outDir + Config.configDir + '/datasource' + Config.extension))
-  _.extend(Config.datasource, baseDatasource)
-  for (let datasource of Config.globFiles(Config.outDir + Config.configDir + '/datasource.' + env + Config.extension)) {
-    let conf = require(path.resolve(datasource))
-    _.extend(Config.datasource, conf)
+  for (let o of Config.globFiles(Config.outDir + Config.configDir + '/config.' + env + Config.extension)) {
+    let tmp = require(path.resolve(o))
+    _.extend(Config, tmp)
+  }
+  for (let o of Config.globFiles(Config.outDir + Config.configDir + '/datasource' + Config.extension)) {
+    let tmp = require(path.resolve(o))
+    _.extend(Config.datasource, tmp)
+  }
+  for (let o of Config.globFiles(Config.outDir + Config.configDir + '/datasource.' + env + Config.extension)) {
+    let tmp = require(path.resolve(o))
+    _.extend(Config.datasource, tmp)
   }
   Config.init = true
   for (let prop in Config) {

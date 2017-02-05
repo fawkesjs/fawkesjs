@@ -26,19 +26,25 @@ Config.datasource = {
 exports.Config = Config;
 if (!Config.init) {
     var env = process.env.NODE_ENV || "development";
-    var baseConfig = require(path.resolve(Config.outDir + Config.configDir + '/config' + Config.extension));
-    _.extend(Config, baseConfig);
-    for (var _i = 0, _a = Config.globFiles(Config.outDir + Config.configDir + '/config.' + env + Config.extension); _i < _a.length; _i++) {
-        var config = _a[_i];
-        var conf = require(path.resolve(config));
-        _.extend(Config, conf);
+    for (var _i = 0, _a = Config.globFiles(Config.outDir + Config.configDir + '/config' + Config.extension); _i < _a.length; _i++) {
+        var o = _a[_i];
+        var tmp = require(path.resolve(o));
+        _.extend(Config, tmp);
     }
-    var baseDatasource = require(path.resolve(Config.outDir + Config.configDir + '/datasource' + Config.extension));
-    _.extend(Config.datasource, baseDatasource);
-    for (var _b = 0, _c = Config.globFiles(Config.outDir + Config.configDir + '/datasource.' + env + Config.extension); _b < _c.length; _b++) {
-        var datasource = _c[_b];
-        var conf = require(path.resolve(datasource));
-        _.extend(Config.datasource, conf);
+    for (var _b = 0, _c = Config.globFiles(Config.outDir + Config.configDir + '/config.' + env + Config.extension); _b < _c.length; _b++) {
+        var o = _c[_b];
+        var tmp = require(path.resolve(o));
+        _.extend(Config, tmp);
+    }
+    for (var _d = 0, _e = Config.globFiles(Config.outDir + Config.configDir + '/datasource' + Config.extension); _d < _e.length; _d++) {
+        var o = _e[_d];
+        var tmp = require(path.resolve(o));
+        _.extend(Config.datasource, tmp);
+    }
+    for (var _f = 0, _g = Config.globFiles(Config.outDir + Config.configDir + '/datasource.' + env + Config.extension); _f < _g.length; _f++) {
+        var o = _g[_f];
+        var tmp = require(path.resolve(o));
+        _.extend(Config.datasource, tmp);
     }
     Config.init = true;
     for (var prop in Config) {
