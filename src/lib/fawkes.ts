@@ -18,8 +18,8 @@ export class Fawkes {
   }
   static app() {
     let app: express.Express = express();
-    app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json())
+    app.use(bodyParser.urlencoded({ extended: true }));
     return app;
   }
   static generateSwagger(location) {

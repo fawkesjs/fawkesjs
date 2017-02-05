@@ -22,8 +22,8 @@ var Fawkes = (function () {
     };
     Fawkes.app = function () {
         var app = express();
-        app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
         return app;
     };
     Fawkes.generateSwagger = function (location) {

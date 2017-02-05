@@ -57,6 +57,9 @@ exports.Route = {
                 "produces": [
                     "application/json"
                 ],
+                "consumes": [
+                    "application/json",
+                ]
             };
             if (route.parameters) {
                 path[prefix + remote][route.method]["parameters"] = route.parameters;
