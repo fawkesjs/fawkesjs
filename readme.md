@@ -9,6 +9,17 @@ git clone https://github.com/fawkesjs/fawkesjs-starter
 follow the readme of that repo
 ~~~
 
-## Community
-- FawkesJs https://gitter.im/fawkesjs
-- Anything personal go to https://gitter.im/nghenglim
+## Build in structure in this project
+- Express
+- Sequelize
+- Typescript
+- Swagger: use `fawkesjs -s ./swagger/swagger.json` to generate swagger document
+- Express Rest Param Validation: integration with swagger document generation
+- Acl (inside `fawkesjs-starter/src/module`)
+- AccessToken (inside `fawkesjs-starter/src/module`)
+
+## Resources
+- [Starter](https://github.com/fawkesjs/fawkesjs-starter)
+- [Documentation](https://github.com/fawkesjs/fawkesjs/tree/master/doc)
+- [Gitter/Community](https://gitter.im/fawkesjs)
+- [Contact Main Author](https://gitter.im/nghenglim)
