@@ -53,6 +53,10 @@ export class RestMiddleware {
             }
             arg[tmp.name] = q
           }
+          if (tmp.in === 'body') {
+            arg = req.body
+            continue
+          }
           let v = arg[tmp.name]
           if (tmp.default && typeof v === 'undefined') {
             v = tmp.default
@@ -65,21 +69,25 @@ export class RestMiddleware {
               min: tmp.minLength ? 0 : tmp.minLength,
               max: tmp.maxLength ? undefined : tmp.maxLength
             }
-            if (stringTypes.indexOf(tmp.type) !== -1 && typeof v !== 'string') {
-              errs.push({ field: tmp.name, type: "string" })
-            } else if (tmp.type === 'uuid' && !validator.isUUID(v)) {
-              errs.push({ field: tmp.name, type: "uuid" })
-            } else if (stringTypes.indexOf(tmp.type) !== -1 && !validator.isLength(v, lengthOpt)) {
-              errs.push({ field: tmp.name, type: "strlen" })
+            if (stringTypes.indexOf(tmp.type) !== -1) {
+              if (typeof v !== 'string') {
+                errs.push({ field: tmp.name, type: "string" })
+              } else if (tmp.type === 'uuid' && !validator.isUUID(v)) {
+                errs.push({ field: tmp.name, type: "uuid" })
+              } else if (!validator.isLength(v, lengthOpt)) {
+                errs.push({ field: tmp.name, type: "strlen" })
+              }
             }
-            if (numberTypes.indexOf(tmp.type) !== -1 && typeof v !== 'number') {
-              errs.push({ field: tmp.name, type: "number" })
-            } else if (tmp.type === 'integer' && !isInt(v)) {
-              errs.push({ field: tmp.name, type: "integer" })
-            } else if (tmp.type === 'integer' && typeof tmp.maximum !== 'undefined' && v > tmp.maximum) {
-              errs.push({ field: tmp.name, type: "maximum" })
-            } else if (tmp.type === 'integer' && typeof tmp.minimum !== 'undefined' && v < tmp.minimum) {
-              errs.push({ field: tmp.name, type: "minimum" })
+            if (numberTypes.indexOf(tmp.type) !== -1) {
+              if (typeof v !== 'number') {
+                errs.push({ field: tmp.name, type: "number" })
+              } else if (!isInt(v)) {
+                errs.push({ field: tmp.name, type: "integer" })
+              } else if (typeof tmp.maximum !== 'undefined' && v > tmp.maximum) {
+                errs.push({ field: tmp.name, type: "maximum" })
+              } else if (typeof tmp.minimum !== 'undefined' && v < tmp.minimum) {
+                errs.push({ field: tmp.name, type: "minimum" })
+              }
             }
             if (tmp.type === 'boolean' && typeof v !== 'boolean') {
               errs.push({ field: tmp.name, type: "boolean" })
