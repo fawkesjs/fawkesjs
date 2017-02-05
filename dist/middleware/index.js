@@ -27,8 +27,8 @@ var RestMiddleware = (function () {
                         else if (typeof q === 'string' && tmp.type === 'number') {
                             q = parseFloat(q);
                         }
-                        if (q != q) {
-                            errs.push({ field: tmp.name, type: "number" });
+                        if (q != req.body[tmp.name]) {
+                            errs.push({ field: tmp.name, type: tmp.type });
                         }
                         arg[tmp.name] = q;
                     }
@@ -40,13 +40,23 @@ var RestMiddleware = (function () {
                         else if (typeof q === 'string' && tmp.type === 'number') {
                             q = parseFloat(q);
                         }
-                        if (q != q) {
-                            errs.push({ field: tmp.name, type: "number" });
+                        if (q != req.body[tmp.name]) {
+                            errs.push({ field: tmp.name, type: tmp.type });
                         }
                         arg[tmp.name] = q;
                     }
                     if (tmp.in === 'formData' && typeof (req.body[tmp.name]) !== 'undefined') {
-                        arg[tmp.name] = req.body[tmp.name];
+                        var q = req.body[tmp.name];
+                        if (typeof q === 'string' && tmp.type === 'integer') {
+                            q = parseInt(q);
+                        }
+                        else if (typeof q === 'string' && tmp.type === 'number') {
+                            q = parseFloat(q);
+                        }
+                        if (q != req.body[tmp.name]) {
+                            errs.push({ field: tmp.name, type: tmp.type });
+                        }
+                        arg[tmp.name] = q;
                     }
                     var v = arg[tmp.name];
                     if (tmp.default && typeof v === 'undefined') {
@@ -55,7 +65,7 @@ var RestMiddleware = (function () {
                     if (tmp.required && typeof v === 'undefined') {
                         errs.push({ field: tmp.name, type: "required" });
                     }
-                    if (v !== 'undefined') {
+                    if (typeof v !== 'undefined') {
                         var lengthOpt = {
                             min: tmp.minLength ? 0 : tmp.minLength,
                             max: tmp.maxLength ? 0 : tmp.maxLength
@@ -66,7 +76,7 @@ var RestMiddleware = (function () {
                         else if (tmp.type === 'uuid' && !validator.isUUID(v)) {
                             errs.push({ field: tmp.name, type: "uuid" });
                         }
-                        else if (!validator.isLength(v, lengthOpt)) {
+                        else if (stringTypes.indexOf(tmp.type) !== -1 && !validator.isLength(v, lengthOpt)) {
                             errs.push({ field: tmp.name, type: "strlen" });
                         }
                         if (numberTypes.indexOf(tmp.type) !== -1 && typeof v !== 'number') {
@@ -75,10 +85,10 @@ var RestMiddleware = (function () {
                         else if (tmp.type === 'integer' && !isInt(v)) {
                             errs.push({ field: tmp.name, type: "integer" });
                         }
-                        else if (typeof tmp.maximum !== 'undefined' && v > tmp.maximum) {
+                        else if (typeof tmp.maximum !== 'undefined' && v >= tmp.maximum) {
                             errs.push({ field: tmp.name, type: "maximum" });
                         }
-                        else if (typeof tmp.minimum !== 'undefined' && v < tmp.minimum) {
+                        else if (typeof tmp.minimum !== 'undefined' && v <= tmp.minimum) {
                             errs.push({ field: tmp.name, type: "minimum" });
                         }
                     }
