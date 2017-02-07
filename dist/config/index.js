@@ -13,7 +13,7 @@ var Config = (function () {
 }());
 Config.port = 3000;
 Config.init = false;
-Config.outDir = './src';
+Config.outDir = './app';
 Config.extension = '.ts';
 Config.configDir = "/config";
 Config.middlewareDir = "/middleware";

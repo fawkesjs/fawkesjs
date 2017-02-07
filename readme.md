@@ -15,8 +15,8 @@ follow the readme of that repo
 - Typescript
 - Swagger: use `fawkesjs -s ./swagger/swagger.json` to generate swagger document
 - Express Rest Param Validation: integration with swagger document generation
-- Acl (inside `fawkesjs-starter/src/module`)
-- AccessToken (inside `fawkesjs-starter/src/module`)
+- Acl (inside `fawkesjs-starter/app/module`)
+- AccessToken (inside `fawkesjs-starter/app/module`)
 
 ## Resources
 - [Starter](https://github.com/fawkesjs/fawkesjs-starter)

@@ -5,7 +5,7 @@ import * as _ from "underscore";
 export class Config {
   static port: number = 3000
   static init: boolean = false
-  static outDir: string = './src'
+  static outDir: string = './app'
   static extension: string = '.ts'
   static configDir: string = "/config"
   static middlewareDir: string = "/middleware"
