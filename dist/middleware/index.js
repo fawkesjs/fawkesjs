@@ -3,6 +3,10 @@ var validator = require("validator");
 var _ = require("underscore");
 var ref_1 = require("../ref");
 var numberTypes = ["integer", "number"];
+var notSupportError = {
+    statusCode: 400,
+    errorCode: ref_1.ErrorCode.REST_PARAM_NOT_SUPPORTED
+};
 function isInt(n) {
     return n % 1 === 0;
 }
@@ -45,6 +49,9 @@ function verifyArg(v, de, fmt) {
         else if (fmt.format === 'uuid' && !validator.isUUID(v)) {
             errs.push({ field: fmt.name, type: "uuid" });
         }
+        else if (fmt.format === 'email' && !validator.isEmail(v)) {
+            errs.push({ field: fmt.name, type: "email" });
+        }
         else if (!validator.isLength(v, lengthOpt)) {
             errs.push({ field: fmt.name, type: "strlen" });
         }
@@ -66,6 +73,33 @@ function verifyArg(v, de, fmt) {
             errs.push({ field: fmt.name, type: "minimum" });
         }
     }
+    if (fmt.type === 'object') {
+        throw notSupportError;
+    }
+    if (fmt.type === 'array') {
+        if (!Array.isArray(v)) {
+            errs.push({ field: fmt.name, type: "array" });
+        }
+        else if (!fmt.items || !fmt.items.properties) {
+            throw notSupportError;
+        }
+        else {
+            if (fmt.items.required && fmt.items.required.length) {
+                var requires = fmt.items.required;
+                for (var i = 0; i < requires.length; i++) {
+                    var require_1 = requires[i];
+                    for (var j = 0; j < v.length; j++) {
+                        if (typeof v[j][require_1] === 'undefined') {
+                            errs.push({ field: fmt.name + '.' + require_1, type: "required" });
+                        }
+                    }
+                }
+            }
+            for (var prop in fmt.items.properties) {
+                errs = errs.concat(verifyArg(v[prop], v[prop], fmt.items.properties[prop]));
+            }
+        }
+    }
     if (fmt.type === 'boolean' && typeof v !== 'boolean') {
         errs.push({ field: fmt.name, type: "boolean" });
     }
@@ -83,7 +117,10 @@ function verifyBodySchema(body, schema) {
             }
         }
         for (var prop in properties) {
-            if (typeof body[prop] === 'undefined') {
+            if (typeof body[prop] === 'undefined' && typeof properties[prop].default !== 'undefined') {
+                body[prop] = properties[prop].default;
+            }
+            else if (typeof body[prop] === 'undefined') {
                 continue;
             }
             arg[prop] = body[prop];
@@ -126,7 +163,16 @@ var RestMiddleware = (function () {
                         if (param.required && typeof req.body === 'undefined') {
                             errs.push({ field: param.name, type: 'required' });
                         }
-                        else if (param.schema && param.schema.properties) {
+                        else if (param.type !== 'object') {
+                            throw notSupportError;
+                        }
+                        else if (param.type === 'object' && typeof req.body !== 'object') {
+                            errs.push({ field: param.name, type: 'object' });
+                        }
+                        else if (!param.schema || !param.schema.properties) {
+                            throw notSupportError;
+                        }
+                        else {
                             var tmp = verifyBodySchema(req.body, param.schema);
                             _.extend(arg, tmp.arg);
                             errs = errs.concat(tmp.errs);
