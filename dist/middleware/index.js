@@ -109,6 +109,9 @@ function verifyBodySchema(body, schema) {
     var errs = [];
     var arg = {};
     var properties = schema.properties || [];
+    if (schema.type !== 'object') {
+        throw notSupportError;
+    }
     if (schema.required) {
         for (var i = 0; i < schema.required.length; i++) {
             var prop = schema.required[i];
@@ -162,12 +165,6 @@ var RestMiddleware = (function () {
                         // if dont define properties, use req.body in controller
                         if (param.required && typeof req.body === 'undefined') {
                             errs.push({ field: param.name, type: 'required' });
-                        }
-                        else if (param.type !== 'object') {
-                            throw notSupportError;
-                        }
-                        else if (param.type === 'object' && typeof req.body !== 'object') {
-                            errs.push({ field: param.name, type: 'object' });
                         }
                         else if (!param.schema || !param.schema.properties) {
                             throw notSupportError;

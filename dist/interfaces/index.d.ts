@@ -30,7 +30,7 @@ export interface IRouteParameter {
     in: string;
     description?: string;
     required?: boolean;
-    type: string;
+    type?: string;
     format?: string;
     schema?: any;
     items?: any;
