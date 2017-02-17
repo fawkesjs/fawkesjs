@@ -13,7 +13,7 @@ export let Route = {
       app.route(prefix + remote)[route.method](
         (req, res, next) => {
           let preCtrls = []
-          for (let o of Config.globFiles(Config.outDir + Config.middlewareDir + '/index' + Config.extension)) {
+          for (let o of Helper.globFiles(Config.get().outDir + Config.get().middlewareDir + '/index' + Config.get().extension)) {
             let tmp = require(path.resolve(o))
             preCtrls = tmp.preCtrls
           }

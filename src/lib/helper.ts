@@ -1,4 +1,9 @@
+import { sync } from "glob";
+import { union } from "lodash";
 export class Helper {
+  static globFiles(location: string): Array<string> {
+    return union([], sync(location));
+  }
   static transactionCommit(t, data) {
     let p1 = Promise.resolve(data)
     let p2 = t.commit()

@@ -7,7 +7,7 @@ export declare class Config {
     static middlewareDir: string;
     static routeDir: string;
     static ormDir: string;
-    static globFiles(location: string): Array<string>;
     static useSequelize: boolean;
     static datasource: any;
+    static get(): typeof Config;
 }

@@ -1,7 +1,12 @@
 "use strict";
+var glob_1 = require("glob");
+var lodash_1 = require("lodash");
 var Helper = (function () {
     function Helper() {
     }
+    Helper.globFiles = function (location) {
+        return lodash_1.union([], glob_1.sync(location));
+    };
     Helper.transactionCommit = function (t, data) {
         var p1 = Promise.resolve(data);
         var p2 = t.commit();

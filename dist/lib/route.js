@@ -10,7 +10,7 @@ exports.Route = {
             remote = remote.replace('{', ':').replace('}', '');
             app.route(prefix + remote)[route.method](function (req, res, next) {
                 var preCtrls = [];
-                for (var _i = 0, _a = config_1.Config.globFiles(config_1.Config.outDir + config_1.Config.middlewareDir + '/index' + config_1.Config.extension); _i < _a.length; _i++) {
+                for (var _i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir + config_1.Config.get().middlewareDir + '/index' + config_1.Config.get().extension); _i < _a.length; _i++) {
                     var o = _a[_i];
                     var tmp = require(path.resolve(o));
                     preCtrls = tmp.preCtrls;

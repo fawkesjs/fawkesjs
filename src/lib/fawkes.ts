@@ -3,28 +3,35 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as _ from "underscore";
 import * as fs from 'fs';
+import { Helper } from '../lib/helper'
 import { Config } from '../config'
+import { Orm } from '../orm'
 import { Route } from '../lib/route'
 export class Fawkes {
   static activateRoute(app) {
-    let preRoute = Config.outDir + Config.routeDir
-    let postRoute = '/index' + Config.extension
-    for (let route of Config.globFiles(preRoute + '/**' + postRoute)) {
+    let preRoute = Config.get().outDir + Config.get().routeDir
+    let postRoute = '/index' + Config.get().extension
+    for (let route of Helper.globFiles(preRoute + '/**' + postRoute)) {
       let theRoute = require(path.resolve(route))
       route = route.substring(preRoute.length)
       route = route.substring(route.length - postRoute.length, -1)
       Route.activate(app, theRoute.routes, route)
     }
   }
+  static initClass() {
+    Config.get()
+    Orm.get()
+  }
   static app() {
+    Fawkes.initClass()
     let app: express.Express = express();
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: true }));
     return app;
   }
   static generateSwagger(location) {
-    let preRoute = Config.outDir + Config.routeDir
-    let postRoute = '/index' + Config.extension
+    let preRoute = Config.get().outDir + Config.get().routeDir
+    let postRoute = '/index' + Config.get().extension
 
     let sj = {
       "swagger": "2.0",
@@ -62,15 +69,15 @@ export class Fawkes {
       }
     }
     let env = process.env.NODE_ENV || "development"
-    for (let o of Config.globFiles(Config.outDir + Config.configDir + '/swagger' + Config.extension)) {
+    for (let o of Helper.globFiles(Config.get().outDir + Config.get().configDir + '/swagger' + Config.get().extension)) {
       let tmp = require(path.resolve(o))
       _.extend(sj, tmp)
     }
-    for (let o of Config.globFiles(Config.outDir + Config.configDir + '/swagger.' + env + Config.extension)) {
+    for (let o of Helper.globFiles(Config.get().outDir + Config.get().configDir + '/swagger.' + env + Config.get().extension)) {
       let tmp = require(path.resolve(o))
       _.extend(sj, tmp)
     }
-    for (let route of Config.globFiles(preRoute + '/**' + postRoute)) {
+    for (let route of Helper.globFiles(preRoute + '/**' + postRoute)) {
       let theRoute = require(path.resolve(route))
       route = route.substring(preRoute.length)
       route = route.substring(route.length - postRoute.length, -1)
