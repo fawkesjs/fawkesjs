@@ -124,7 +124,7 @@ function verifyBodySchema(body, schema) {
   return {arg, errs};
 }
 export class RestMiddleware {
-  static processArgAsync(preCtrl: IPreCtrl) {
+  static async processArgAsync(preCtrl: IPreCtrl) {
     let sequence = Promise.resolve()
     let route: IRoute = preCtrl.route
     let req = preCtrl.req

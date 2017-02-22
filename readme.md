@@ -3,6 +3,9 @@ FawkesJs is a Javascript framework that is built on top of express, typescript a
 Inspired by Laravel and Loopback, the target of the framework is to make Javascript development
 even easier.
 
+## System Requirement
+- Nodejs 7.6 or above (for the support of async await)
+
 ## Usage
 ~~~
 git clone https://github.com/fawkesjs/fawkesjs-starter
