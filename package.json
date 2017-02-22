@@ -1,6 +1,6 @@
 {
   "name": "fawkesjs",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "bin": {
     "fawkesjs": "dist/bin/fawkes.js"
   },
+  "engines" : { "node" : ">=7.6.0" },
   "typings": "./dist/index.d.ts",
   "author": "nghenglim",
   "license": "MIT",
