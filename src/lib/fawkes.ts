@@ -29,7 +29,7 @@ export class Fawkes {
     app.use(bodyParser.urlencoded({ extended: true }));
     return app;
   }
-  static generateSwagger(location) {
+  static async generateSwaggerAsync(location) {
     let preRoute = Config.get().outDir + Config.get().routeDir
     let postRoute = '/index' + Config.get().extension
 
@@ -83,6 +83,14 @@ export class Fawkes {
       route = route.substring(route.length - postRoute.length, -1)
       _.extend(sj.paths, Route.swagger(theRoute.routes, route, theRoute.swagger))
     }
-    fs.writeFile(location, JSON.stringify(sj))
+    return new Promise(function(resolve, reject) {
+      fs.writeFile(location, JSON.stringify(sj), function(err) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve({location})
+        }
+      })
+    });
   }
 }

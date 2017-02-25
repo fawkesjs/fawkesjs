@@ -32,6 +32,7 @@ var Config = (function () {
             for (var prop in Config) {
                 Object.defineProperty(Config, prop, { writable: false });
             }
+            return Config;
         }
         else {
             return Config;

@@ -7,5 +7,11 @@ program
   .option('-s, --swagger [value]', 'generate swagger document location')
 program.parse(process.argv);
 if (program.swagger) {
-  Fawkes.generateSwagger(program.swagger)
+  Fawkes.generateSwaggerAsync(program.swagger)
+    .then(tmp => {
+      console.log(tmp)
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
