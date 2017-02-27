@@ -81,6 +81,9 @@ export class Fawkes {
       let theRoute = require(path.resolve(route))
       route = route.substring(preRoute.length)
       route = route.substring(route.length - postRoute.length, -1)
+      if (theRoute.config && typeof theRoute.config.swagger !== 'undefined' && theRoute.config.swagger === false) {
+          continue
+      }
       _.extend(sj.paths, Route.swagger(theRoute.routes, route, theRoute.swagger))
     }
     return new Promise(function(resolve, reject) {

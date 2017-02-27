@@ -22,9 +22,12 @@
 - app/orm/index.ts: `ormDefinitions` for list of ormDefinitions that you want to include
 - app/orm/{orm}.ts: where your orm class should be at
 - app/ref/: where your const class should be at
+- app/view/: where your view should be at (if you are doing SPA, you probably don't need this)
+- app/view/template: where the view templates locate
+- app/view/view: where the view file locates
 - app/route/{folders}/index.ts: `routes: IRoutes` contain list of route, `{folders}` will be your relative path to base url, `route/index.ts` is the base url.
 - migrations/: sequelize migration file
-- public/: your html file, can also be jade file, using whatever engine you want
+- public/: your static file
 
 ## Naming Convention
 - all folder singular form, to avoid headache in naming (if I use plural form, should `app/bin` be `app/bins` ?)
