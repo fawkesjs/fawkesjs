@@ -60,3 +60,7 @@ export interface IRouteParameters extends Array<IRouteParameter> {
 }
 export interface IRoutes extends Array<IRoute> {
 }
+export interface IRoutesConfig {
+    swagger?: boolean;
+    preCtrls?: Array<any>;
+}

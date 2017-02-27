@@ -33,7 +33,7 @@
 - all folder singular form, to avoid headache in naming (if I use plural form, should `app/bin` be `app/bins` ?)
 
 ## app/route
-- `export const swagger` is the default swagger config for all the route
+- `export const config:IRoutesConfig` is the default config for all the route
 - `IRoute.remote`: api endpoint relative to folder name (only support alphanumeric folder name). Using swagger naming convention, example in express `/account/:id` will be `/account/{id}` here
 - `IRoute.func`: Controller function to use with this route, the controller should contain a parameter in `ICtrl` type
 - `IRoute.acl?`: use with `fawkesjs-starter/app/module/acl` middleware

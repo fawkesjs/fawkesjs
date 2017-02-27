@@ -15,7 +15,8 @@ export class Fawkes {
       let theRoute = require(path.resolve(route))
       route = route.substring(preRoute.length)
       route = route.substring(route.length - postRoute.length, -1)
-      Route.activate(app, theRoute.routes, route)
+      let routesConfig = theRoute.config || {}
+      Route.activate(app, theRoute.routes, route, routesConfig)
     }
   }
   static initClass() {
@@ -84,7 +85,7 @@ export class Fawkes {
       if (theRoute.config && typeof theRoute.config.swagger !== 'undefined' && theRoute.config.swagger === false) {
           continue
       }
-      _.extend(sj.paths, Route.swagger(theRoute.routes, route, theRoute.swagger))
+      _.extend(sj.paths, Route.swagger(theRoute.routes, route))
     }
     return new Promise(function(resolve, reject) {
       fs.writeFile(location, JSON.stringify(sj), function(err) {

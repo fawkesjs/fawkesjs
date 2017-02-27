@@ -54,7 +54,8 @@ var Fawkes = (function () {
             var theRoute = require(path.resolve(route));
             route = route.substring(preRoute.length);
             route = route.substring(route.length - postRoute.length, -1);
-            route_1.Route.activate(app, theRoute.routes, route);
+            var routesConfig = theRoute.config || {};
+            route_1.Route.activate(app, theRoute.routes, route, routesConfig);
         }
     };
     Fawkes.initClass = function () {
@@ -126,7 +127,7 @@ var Fawkes = (function () {
                     if (theRoute.config && typeof theRoute.config.swagger !== 'undefined' && theRoute.config.swagger === false) {
                         continue;
                     }
-                    _.extend(sj.paths, route_1.Route.swagger(theRoute.routes, route, theRoute.swagger));
+                    _.extend(sj.paths, route_1.Route.swagger(theRoute.routes, route));
                 }
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         fs.writeFile(location, JSON.stringify(sj), function (err) {

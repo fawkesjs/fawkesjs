@@ -4,16 +4,21 @@ var path = require("path");
 var config_1 = require("../config");
 var helper_1 = require("../lib/helper");
 exports.Route = {
-    activate: function (app, routes, prefix) {
+    activate: function (app, routes, prefix, routesConfig) {
         var _loop_1 = function (route) {
             var remote = route.remote;
             remote = remote.replace('{', ':').replace('}', '');
             app.route(prefix + remote)[route.method](function (req, res, next) {
                 var preCtrls = [];
-                for (var _i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir + config_1.Config.get().middlewareDir + '/index' + config_1.Config.get().extension); _i < _a.length; _i++) {
-                    var o = _a[_i];
-                    var tmp = require(path.resolve(o));
-                    preCtrls = tmp.preCtrls;
+                if (routesConfig.preCtrls) {
+                    preCtrls = routesConfig.preCtrls;
+                }
+                else {
+                    for (var _i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir + config_1.Config.get().middlewareDir + '/index' + config_1.Config.get().extension); _i < _a.length; _i++) {
+                        var o = _a[_i];
+                        var tmp = require(path.resolve(o));
+                        preCtrls = tmp.preCtrls;
+                    }
                 }
                 var sequence = Promise.resolve({ route: route, req: req });
                 for (var i = 0; i < preCtrls.length; i++) {
@@ -36,11 +41,11 @@ exports.Route = {
             _loop_1(route);
         }
     },
-    swagger: function (routes, prefix, swaggerDefault) {
+    swagger: function (routes, prefix) {
         var path = {};
         for (var _i = 0, routes_2 = routes; _i < routes_2.length; _i++) {
             var route = routes_2[_i];
-            if (route.swagger === false || swaggerDefault === false) {
+            if (route.swagger === false) {
                 continue;
             }
             var remote = route.remote;
@@ -63,9 +68,6 @@ exports.Route = {
             };
             if (route.parameters) {
                 path[prefix + remote][route.method]["parameters"] = route.parameters;
-            }
-            if (swaggerDefault) {
-                _.extend(path[prefix + remote][route.method], swaggerDefault);
             }
             if (route.swagger) {
                 _.extend(path[prefix + remote][route.method], route.swagger);

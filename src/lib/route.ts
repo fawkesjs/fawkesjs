@@ -2,20 +2,24 @@ import * as express from "express";
 import * as _ from "underscore";
 import * as path from "path";
 import { Config } from "../config";
-import { ICtrl, IRoutes, IError, IPreCtrl } from "../interfaces";
+import { ICtrl, IRoutes, IError, IPreCtrl, IRoutesConfig } from "../interfaces";
 import { Helper } from '../lib/helper'
 
 export let Route = {
-  activate(app: express.Express, routes: IRoutes, prefix: string): void {
+  activate(app: express.Express, routes: IRoutes, prefix: string, routesConfig: IRoutesConfig): void {
     for (let route of routes) {
       let remote = route.remote
       remote = remote.replace('{', ':').replace('}', '')
       app.route(prefix + remote)[route.method](
         (req, res, next) => {
           let preCtrls = []
-          for (let o of Helper.globFiles(Config.get().outDir + Config.get().middlewareDir + '/index' + Config.get().extension)) {
-            let tmp = require(path.resolve(o))
-            preCtrls = tmp.preCtrls
+          if (routesConfig.preCtrls) {
+            preCtrls = routesConfig.preCtrls
+          } else {
+            for (let o of Helper.globFiles(Config.get().outDir + Config.get().middlewareDir + '/index' + Config.get().extension)) {
+              let tmp = require(path.resolve(o))
+              preCtrls = tmp.preCtrls
+            }
           }
           let sequence = Promise.resolve({ route, req })
           for (let i = 0; i < preCtrls.length; i++) {
@@ -35,10 +39,10 @@ export let Route = {
       )
     }
   },
-  swagger(routes: IRoutes, prefix: string, swaggerDefault: any) {
+  swagger(routes: IRoutes, prefix: string) {
     let path = {}
     for (let route of routes) {
-      if (route.swagger === false || swaggerDefault === false) {
+      if (route.swagger === false) {
         continue
       }
       let remote = route.remote
@@ -61,9 +65,6 @@ export let Route = {
       }
       if (route.parameters) {
         path[prefix + remote][route.method]["parameters"] = route.parameters
-      }
-      if (swaggerDefault) {
-        _.extend(path[prefix + remote][route.method], swaggerDefault)
       }
       if (route.swagger) {
         _.extend(path[prefix + remote][route.method], route.swagger)
