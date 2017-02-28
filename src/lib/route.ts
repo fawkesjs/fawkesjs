@@ -61,7 +61,18 @@ export let Route = {
         ],
         "consumes" : [
           "application/json",
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Param"
+          },
+          "401": {
+            "description": "Authorization Required"
+          }
+        }
       }
       if (route.parameters) {
         path[prefix + remote][route.method]["parameters"] = route.parameters
