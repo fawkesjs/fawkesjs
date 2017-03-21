@@ -3,6 +3,10 @@ import * as validator from 'validator';
 import * as _ from 'underscore';
 import { ErrorCode } from '../ref'
 const numberTypes = ["integer", "number"]
+export interface IParseArg {
+  arg: any,
+  errs: Array<any>
+}
 let notSupportError: IError = {
   statusCode: 400,
   errorCode: ErrorCode.REST_PARAM_NOT_SUPPORTED
@@ -25,7 +29,7 @@ function convertion(q, tmp:IRouteParameter) {
   }
   return q
 }
-function verifyArg(v, de, fmt): Array<any> {
+function parseArg(v, de, fmt): IParseArg {
   let errs = []
   if (fmt.default && typeof v === 'undefined') {
     v = fmt.default
@@ -34,7 +38,7 @@ function verifyArg(v, de, fmt): Array<any> {
     errs.push({ field: fmt.name, type: "required" })
   }
   if (typeof v === 'undefined') {
-    return errs
+    return {arg: v, errs}
   }
   let lengthOpt = {
     min: fmt.minLength ? fmt.minLength : 0,
@@ -65,7 +69,9 @@ function verifyArg(v, de, fmt): Array<any> {
     }
   }
   if (fmt.type === 'object') {
-    throw notSupportError
+    let tmp = parseObjectSchema(v, fmt.schema)
+    v = tmp.arg
+    errs = errs.concat(tmp.errs)
   }
   if (fmt.type === 'array') {
     if (!Array.isArray(v)) {
@@ -73,6 +79,11 @@ function verifyArg(v, de, fmt): Array<any> {
     } else if (!fmt.items || !fmt.items.properties) {
       throw notSupportError
     } else {
+      for (let prop in fmt.items.properties) {
+        let tmp = parseArg(v[prop], v[prop], fmt.items.properties[prop])
+        v[prop] = tmp.arg
+        errs = errs.concat(tmp.errs)
+      }
       if (fmt.items.required && fmt.items.required.length) {
         let requires = fmt.items.required
         for (let i=0;i<requires.length;i++) {
@@ -84,17 +95,14 @@ function verifyArg(v, de, fmt): Array<any> {
           }
         }
       }
-      for (let prop in fmt.items.properties) {
-        errs = errs.concat(verifyArg(v[prop], v[prop], fmt.items.properties[prop]))
-      }
     }
   }
   if (fmt.type === 'boolean' && typeof v !== 'boolean') {
     errs.push({ field: fmt.name, type: "boolean" })
   }
-  return errs;
+  return {arg: v, errs};
 }
-function verifyBodySchema(body, schema) {
+function parseObjectSchema(obj, schema) {
   let errs = []
   let arg = {}
   let properties = schema.properties || []
@@ -102,35 +110,36 @@ function verifyBodySchema(body, schema) {
     throw notSupportError
   }
   if (schema.required) {
-    for (let i=0;i<schema.required.length;i++) {
-      let prop = schema.required[i]
-      if (typeof body[prop] === 'undefined') {
-        errs.push({field: prop, type: "required"})
-      }
-    }
     for (let prop in properties) {
-      if (typeof body[prop] === 'undefined' && typeof properties[prop].default !== 'undefined') {
-        body[prop] = properties[prop].default
-      } else if (typeof body[prop] === 'undefined') {
+      if (typeof obj[prop] === 'undefined' && typeof properties[prop].default !== 'undefined') {
+        obj[prop] = properties[prop].default
+      } else if (typeof obj[prop] === 'undefined') {
         continue
       }
-      arg[prop] = body[prop]
+      arg[prop] = obj[prop]
       // since is using json, we dont do type convertion here
       // should use another function, probably
       properties[prop].name = prop
-      errs = errs.concat(verifyArg(body[prop], body[prop], properties[prop]))
+      let tmp = parseArg(obj[prop], obj[prop], properties[prop])
+      obj[prop] = tmp.arg
+      errs = errs.concat(tmp.errs)
+    }
+    for (let i=0;i<schema.required.length;i++) {
+      let prop = schema.required[i]
+      if (typeof obj[prop] === 'undefined') {
+        errs.push({field: prop, type: "required"})
+      }
     }
   }
   return {arg, errs};
 }
 export class RestMiddleware {
   static async processArgAsync(preCtrl: IPreCtrl) {
-    let sequence = Promise.resolve()
-    let route: IRoute = preCtrl.route
+    let errs = []
+    let arg = {}
     let req = preCtrl.req
-    return sequence.then(() => {
-      let arg = {}
-      let errs = []
+    let route: IRoute = preCtrl.route
+    try {
       if (route.parameters) {
         for (var i = 0; i < route.parameters.length; i++) {
           let param = route.parameters[i]
@@ -154,13 +163,15 @@ export class RestMiddleware {
             } else if (!param.schema || !param.schema.properties) {
               throw notSupportError
             } else {
-              let tmp = verifyBodySchema(req.body, param.schema)
+              let tmp = parseObjectSchema(req.body, param.schema)
               _.extend(arg, tmp.arg)
               errs = errs.concat(tmp.errs)
             }
             continue
           }
-          errs = errs.concat(verifyArg(arg[param.name], de, param))
+          let tmp = parseArg(arg[param.name], de, param)
+          arg[param.name] = tmp.arg
+          errs = errs.concat(tmp.errs)
         }
       }
       if (errs.length) {
@@ -173,8 +184,8 @@ export class RestMiddleware {
       }
       preCtrl.arg = arg
       return Promise.resolve(preCtrl)
-    }).catch(err => {
+    } catch(err) {
       return Promise.reject(err)
-    })
+    }
   }
 }

@@ -3,8 +3,10 @@ var _ = require("underscore");
 var path = require("path");
 var config_1 = require("../config");
 var helper_1 = require("../lib/helper");
-exports.Route = {
-    activate: function (app, routes, prefix, routesConfig) {
+var Route = (function () {
+    function Route() {
+    }
+    Route.activate = function (app, routes, prefix, routesConfig) {
         var _loop_1 = function (route) {
             var remote = route.remote;
             remote = remote.replace('{', ':').replace('}', '');
@@ -40,8 +42,8 @@ exports.Route = {
             var route = routes_1[_i];
             _loop_1(route);
         }
-    },
-    swagger: function (routes, prefix) {
+    };
+    Route.swagger = function (routes, prefix) {
         var path = {};
         for (var _i = 0, routes_2 = routes; _i < routes_2.length; _i++) {
             var route = routes_2[_i];
@@ -64,7 +66,18 @@ exports.Route = {
                 ],
                 "consumes": [
                     "application/json",
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Param"
+                    },
+                    "401": {
+                        "description": "Authorization Required"
+                    }
+                }
             };
             if (route.parameters) {
                 path[prefix + remote][route.method]["parameters"] = route.parameters;
@@ -74,5 +87,7 @@ exports.Route = {
             }
         }
         return path;
-    }
-};
+    };
+    return Route;
+}());
+exports.Route = Route;

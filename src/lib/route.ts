@@ -5,8 +5,8 @@ import { Config } from "../config";
 import { ICtrl, IRoutes, IError, IPreCtrl, IRoutesConfig } from "../interfaces";
 import { Helper } from '../lib/helper'
 
-export let Route = {
-  activate(app: express.Express, routes: IRoutes, prefix: string, routesConfig: IRoutesConfig): void {
+export class Route {
+  static activate(app: express.Express, routes: IRoutes, prefix: string, routesConfig: IRoutesConfig) {
     for (let route of routes) {
       let remote = route.remote
       remote = remote.replace('{', ':').replace('}', '')
@@ -38,8 +38,8 @@ export let Route = {
         }
       )
     }
-  },
-  swagger(routes: IRoutes, prefix: string) {
+  }
+  static swagger(routes: IRoutes, prefix: string) {
     let path = {}
     for (let route of routes) {
       if (route.swagger === false) {

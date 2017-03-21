@@ -12,6 +12,11 @@ git clone https://github.com/fawkesjs/fawkesjs-starter
 follow the readme of that repo
 ~~~
 
+## Some Note
+FawkesJs-starter comes default with configuration suits for new project, such as using with postgres, api and web in same project.
+
+However future scaling possibility has been implemented inside our code, just that we believe early optimization is bad and expensive, therefore we will not include that inside FawkesJs-starter.
+
 ## Build in structure in this project
 - Express
 - Sequelize

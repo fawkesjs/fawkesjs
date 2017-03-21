@@ -62,7 +62,7 @@ function convertion(q, tmp) {
     }
     return q;
 }
-function verifyArg(v, de, fmt) {
+function parseArg(v, de, fmt) {
     var errs = [];
     if (fmt.default && typeof v === 'undefined') {
         v = fmt.default;
@@ -71,7 +71,7 @@ function verifyArg(v, de, fmt) {
         errs.push({ field: fmt.name, type: "required" });
     }
     if (typeof v === 'undefined') {
-        return errs;
+        return { arg: v, errs: errs };
     }
     var lengthOpt = {
         min: fmt.minLength ? fmt.minLength : 0,
@@ -109,7 +109,9 @@ function verifyArg(v, de, fmt) {
         }
     }
     if (fmt.type === 'object') {
-        throw notSupportError;
+        var tmp = parseObjectSchema(v, fmt.schema);
+        v = tmp.arg;
+        errs = errs.concat(tmp.errs);
     }
     if (fmt.type === 'array') {
         if (!Array.isArray(v)) {
@@ -119,6 +121,11 @@ function verifyArg(v, de, fmt) {
             throw notSupportError;
         }
         else {
+            for (var prop in fmt.items.properties) {
+                var tmp = parseArg(v[prop], v[prop], fmt.items.properties[prop]);
+                v[prop] = tmp.arg;
+                errs = errs.concat(tmp.errs);
+            }
             if (fmt.items.required && fmt.items.required.length) {
                 var requires = fmt.items.required;
                 for (var i = 0; i < requires.length; i++) {
@@ -130,17 +137,14 @@ function verifyArg(v, de, fmt) {
                     }
                 }
             }
-            for (var prop in fmt.items.properties) {
-                errs = errs.concat(verifyArg(v[prop], v[prop], fmt.items.properties[prop]));
-            }
         }
     }
     if (fmt.type === 'boolean' && typeof v !== 'boolean') {
         errs.push({ field: fmt.name, type: "boolean" });
     }
-    return errs;
+    return { arg: v, errs: errs };
 }
-function verifyBodySchema(body, schema) {
+function parseObjectSchema(obj, schema) {
     var errs = [];
     var arg = {};
     var properties = schema.properties || [];
@@ -148,24 +152,26 @@ function verifyBodySchema(body, schema) {
         throw notSupportError;
     }
     if (schema.required) {
-        for (var i = 0; i < schema.required.length; i++) {
-            var prop = schema.required[i];
-            if (typeof body[prop] === 'undefined') {
-                errs.push({ field: prop, type: "required" });
-            }
-        }
         for (var prop in properties) {
-            if (typeof body[prop] === 'undefined' && typeof properties[prop].default !== 'undefined') {
-                body[prop] = properties[prop].default;
+            if (typeof obj[prop] === 'undefined' && typeof properties[prop].default !== 'undefined') {
+                obj[prop] = properties[prop].default;
             }
-            else if (typeof body[prop] === 'undefined') {
+            else if (typeof obj[prop] === 'undefined') {
                 continue;
             }
-            arg[prop] = body[prop];
+            arg[prop] = obj[prop];
             // since is using json, we dont do type convertion here
             // should use another function, probably
             properties[prop].name = prop;
-            errs = errs.concat(verifyArg(body[prop], body[prop], properties[prop]));
+            var tmp = parseArg(obj[prop], obj[prop], properties[prop]);
+            obj[prop] = tmp.arg;
+            errs = errs.concat(tmp.errs);
+        }
+        for (var i = 0; i < schema.required.length; i++) {
+            var prop = schema.required[i];
+            if (typeof obj[prop] === 'undefined') {
+                errs.push({ field: prop, type: "required" });
+            }
         }
     }
     return { arg: arg, errs: errs };
@@ -175,61 +181,64 @@ var RestMiddleware = (function () {
     }
     RestMiddleware.processArgAsync = function (preCtrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var sequence, route, req;
+            var errs, arg, req, route, i, param, q, de, tmp_1, tmp, err;
             return __generator(this, function (_a) {
-                sequence = Promise.resolve();
-                route = preCtrl.route;
+                errs = [];
+                arg = {};
                 req = preCtrl.req;
-                return [2 /*return*/, sequence.then(function () {
-                        var arg = {};
-                        var errs = [];
-                        if (route.parameters) {
-                            for (var i = 0; i < route.parameters.length; i++) {
-                                var param = route.parameters[i];
-                                var q = void 0, de = void 0;
-                                if (param.in === 'path' && typeof (req.params[param.name]) !== 'undefined') {
-                                    de = req.params[param.name];
-                                    arg[param.name] = convertion(de, param);
-                                }
-                                if (param.in === 'query' && typeof (req.query[param.name]) !== 'undefined') {
-                                    de = req.query[param.name];
-                                    arg[param.name] = convertion(de, param);
-                                }
-                                if (param.in === 'formData' && typeof (req.body[param.name]) !== 'undefined') {
-                                    de = req.body[param.name];
-                                    arg[param.name] = convertion(de, param);
-                                }
-                                if (param.in === 'body') {
-                                    // if dont define properties, use req.body in controller
-                                    if (param.required && typeof req.body === 'undefined') {
-                                        errs.push({ field: param.name, type: 'required' });
-                                    }
-                                    else if (!param.schema || !param.schema.properties) {
-                                        throw notSupportError;
-                                    }
-                                    else {
-                                        var tmp = verifyBodySchema(req.body, param.schema);
-                                        _.extend(arg, tmp.arg);
-                                        errs = errs.concat(tmp.errs);
-                                    }
-                                    continue;
-                                }
-                                errs = errs.concat(verifyArg(arg[param.name], de, param));
+                route = preCtrl.route;
+                try {
+                    if (route.parameters) {
+                        for (i = 0; i < route.parameters.length; i++) {
+                            param = route.parameters[i];
+                            q = void 0, de = void 0;
+                            if (param.in === 'path' && typeof (req.params[param.name]) !== 'undefined') {
+                                de = req.params[param.name];
+                                arg[param.name] = convertion(de, param);
                             }
+                            if (param.in === 'query' && typeof (req.query[param.name]) !== 'undefined') {
+                                de = req.query[param.name];
+                                arg[param.name] = convertion(de, param);
+                            }
+                            if (param.in === 'formData' && typeof (req.body[param.name]) !== 'undefined') {
+                                de = req.body[param.name];
+                                arg[param.name] = convertion(de, param);
+                            }
+                            if (param.in === 'body') {
+                                // if dont define properties, use req.body in controller
+                                if (param.required && typeof req.body === 'undefined') {
+                                    errs.push({ field: param.name, type: 'required' });
+                                }
+                                else if (!param.schema || !param.schema.properties) {
+                                    throw notSupportError;
+                                }
+                                else {
+                                    tmp_1 = parseObjectSchema(req.body, param.schema);
+                                    _.extend(arg, tmp_1.arg);
+                                    errs = errs.concat(tmp_1.errs);
+                                }
+                                continue;
+                            }
+                            tmp = parseArg(arg[param.name], de, param);
+                            arg[param.name] = tmp.arg;
+                            errs = errs.concat(tmp.errs);
                         }
-                        if (errs.length) {
-                            var err = {
-                                statusCode: 400,
-                                errorCode: ref_1.ErrorCode.REST_PARAM_ERROR,
-                                data: errs
-                            };
-                            throw err;
-                        }
-                        preCtrl.arg = arg;
-                        return Promise.resolve(preCtrl);
-                    }).catch(function (err) {
-                        return Promise.reject(err);
-                    })];
+                    }
+                    if (errs.length) {
+                        err = {
+                            statusCode: 400,
+                            errorCode: ref_1.ErrorCode.REST_PARAM_ERROR,
+                            data: errs
+                        };
+                        throw err;
+                    }
+                    preCtrl.arg = arg;
+                    return [2 /*return*/, Promise.resolve(preCtrl)];
+                }
+                catch (err) {
+                    return [2 /*return*/, Promise.reject(err)];
+                }
+                return [2 /*return*/];
             });
         });
     };
