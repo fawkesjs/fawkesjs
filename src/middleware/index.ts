@@ -69,15 +69,23 @@ function parseArg(v, de, fmt): IParseArg {
     }
   }
   if (fmt.type === 'object') {
-    let tmp = parseObjectSchema(v, fmt.schema)
-    v = tmp.arg
-    errs = errs.concat(tmp.errs)
+    if (typeof v !== 'object') {
+      errs.push({ field: fmt.name, type: "object" })
+    } else {
+      let tmp = parseObjectSchema(v, fmt.schema)
+      v = tmp.arg
+      errs = errs.concat(tmp.errs)
+    }
   }
   if (fmt.type === 'array') {
     if (!Array.isArray(v)) {
       errs.push({ field: fmt.name, type: "array" })
     } else if (!fmt.items || !fmt.items.properties) {
       throw notSupportError
+    } else if (fmt.minItems && v.length < fmt.minItems) {
+      errs.push({ field: fmt.name, type: "minItems" })
+    } else if (fmt.maxItems && v.length > fmt.maxItems) {
+      errs.push({ field: fmt.name, type: "maxItems" })
     } else {
       for (let prop in fmt.items.properties) {
         let tmp = parseArg(v[prop], v[prop], fmt.items.properties[prop])
