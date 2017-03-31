@@ -17,4 +17,18 @@ export class Helper {
     delete err.statusCode
     res.status(statusCode).json(err)
   }
+  static objGet(obj:any, fmt:string, o:any) {
+    var v = obj
+    var fmts = fmt.split('.')
+    for (var i=0;i<fmts.length;i++) {
+      if (typeof v[fmts[i]] !== 'undefined') {
+        v = v[fmts[i]]
+      }
+      else {
+        v = o
+        break
+      }
+    }
+    return v
+  }
 }

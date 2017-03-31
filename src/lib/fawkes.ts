@@ -21,7 +21,9 @@ export class Fawkes {
   }
   static initClass() {
     Config.get()
-    Orm.get()
+    if (typeof Config.ormDir === 'string') {
+      Orm.get()
+    }
   }
   static app() {
     Fawkes.initClass()
