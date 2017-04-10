@@ -3,4 +3,5 @@ export declare class Helper {
     static transactionCommitAsync(t: any, data: any): Promise<any>;
     static transactionRollbackAsync(t: any, err: any): Promise<never>;
     static errCb(err: any, res: any): void;
+    static objGet(obj: any, fmt: string, o: any): any;
 }

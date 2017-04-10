@@ -1,5 +1,7 @@
 import { sync } from "glob";
 import { union } from "lodash";
+import * as _ from "underscore";
+
 export class Helper {
   static globFiles(location: string): Array<string> {
     return union([], sync(location));
@@ -13,9 +15,10 @@ export class Helper {
     return Promise.reject(err)
   }
   static errCb(err, res) {
-    let statusCode = err.statusCode ? err.statusCode : 500
-    delete err.statusCode
-    res.status(statusCode).json(err)
+    let theErr = _.clone(err)
+    let statusCode = theErr.statusCode ? theErr.statusCode : 500
+    delete theErr.statusCode
+    res.status(statusCode).json(theErr)
   }
   static objGet(obj:any, fmt:string, o:any) {
     var v = obj

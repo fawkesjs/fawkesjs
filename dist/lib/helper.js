@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var glob_1 = require("glob");
 var lodash_1 = require("lodash");
+var _ = require("underscore");
 var Helper = (function () {
     function Helper() {
     }
@@ -67,9 +68,24 @@ var Helper = (function () {
         });
     };
     Helper.errCb = function (err, res) {
-        var statusCode = err.statusCode ? err.statusCode : 500;
-        delete err.statusCode;
-        res.status(statusCode).json(err);
+        var theErr = _.clone(err);
+        var statusCode = theErr.statusCode ? theErr.statusCode : 500;
+        delete theErr.statusCode;
+        res.status(statusCode).json(theErr);
+    };
+    Helper.objGet = function (obj, fmt, o) {
+        var v = obj;
+        var fmts = fmt.split('.');
+        for (var i = 0; i < fmts.length; i++) {
+            if (typeof v[fmts[i]] !== 'undefined') {
+                v = v[fmts[i]];
+            }
+            else {
+                v = o;
+                break;
+            }
+        }
+        return v;
     };
     return Helper;
 }());
