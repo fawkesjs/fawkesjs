@@ -34,29 +34,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var validator = require("validator");
 var _ = require("underscore");
+var validator = require("validator");
 var ref_1 = require("../ref");
 var numberTypes = ["integer", "number"];
 var notSupportError = {
+    errorCode: ref_1.ErrorCode.REST_PARAM_NOT_SUPPORTED,
     statusCode: 400,
-    errorCode: ref_1.ErrorCode.REST_PARAM_NOT_SUPPORTED
 };
 function isInt(n) {
     return n % 1 === 0;
 }
 function convertion(q, tmp) {
-    if (typeof q === 'string' && tmp.type === 'integer') {
-        q = parseInt(q);
+    if (typeof q === "string" && tmp.type === "integer") {
+        q = parseInt(q, 10);
     }
-    else if (typeof q === 'string' && tmp.type === 'number') {
+    else if (typeof q === "string" && tmp.type === "number") {
         q = parseFloat(q);
     }
-    if (typeof q === 'string' && tmp.type === 'boolean') {
-        if (q === 'true') {
+    if (typeof q === "string" && tmp.type === "boolean") {
+        if (q === "true") {
             q = true;
         }
-        else if (q === 'false') {
+        else if (q === "false") {
             q = false;
         }
     }
@@ -64,27 +64,27 @@ function convertion(q, tmp) {
 }
 function parseArg(v, de, fmt) {
     var errs = [];
-    if (typeof fmt.default !== 'undefined' && typeof v === 'undefined') {
+    if (typeof fmt.default !== "undefined" && typeof v === "undefined") {
         v = fmt.default;
     }
-    if (fmt.required && typeof v === 'undefined') {
+    if (fmt.required && typeof v === "undefined") {
         errs.push({ field: fmt.name, type: "required" });
     }
-    if (typeof v === 'undefined') {
+    if (typeof v === "undefined") {
         return { arg: v, errs: errs };
     }
     var lengthOpt = {
+        max: fmt.maxLength ? fmt.maxLength : undefined,
         min: fmt.minLength ? fmt.minLength : 0,
-        max: fmt.maxLength ? fmt.maxLength : undefined
     };
-    if (fmt.type === 'string') {
-        if (typeof v !== 'string') {
+    if (fmt.type === "string") {
+        if (typeof v !== "string") {
             errs.push({ field: fmt.name, type: "string" });
         }
-        else if (v !== fmt.default && fmt.format === 'uuid' && !validator.isUUID(v)) {
+        else if (v !== fmt.default && fmt.format === "uuid" && !validator.isUUID(v)) {
             errs.push({ field: fmt.name, type: "uuid" });
         }
-        else if (v !== fmt.default && fmt.format === 'email' && !validator.isEmail(v)) {
+        else if (v !== fmt.default && fmt.format === "email" && !validator.isEmail(v)) {
             errs.push({ field: fmt.name, type: "email" });
         }
         else if (!validator.isLength(v, lengthOpt)) {
@@ -92,24 +92,24 @@ function parseArg(v, de, fmt) {
         }
     }
     if (numberTypes.indexOf(fmt.type) !== -1) {
-        if (typeof v !== 'number') {
+        if (typeof v !== "number") {
             errs.push({ field: fmt.name, type: "number" });
         }
-        else if (v != de) {
+        else if (v !== de) {
             errs.push({ field: fmt.name, type: fmt.type });
         }
         else if (!isInt(v)) {
             errs.push({ field: fmt.name, type: "integer" });
         }
-        else if (typeof fmt.maximum !== 'undefined' && v > fmt.maximum) {
+        else if (typeof fmt.maximum !== "undefined" && v > fmt.maximum) {
             errs.push({ field: fmt.name, type: "maximum" });
         }
-        else if (typeof fmt.minimum !== 'undefined' && v < fmt.minimum) {
+        else if (typeof fmt.minimum !== "undefined" && v < fmt.minimum) {
             errs.push({ field: fmt.name, type: "minimum" });
         }
     }
-    if (fmt.type === 'object') {
-        if (typeof v !== 'object') {
+    if (fmt.type === "object") {
+        if (typeof v !== "object") {
             errs.push({ field: fmt.name, type: "object" });
         }
         else {
@@ -118,7 +118,7 @@ function parseArg(v, de, fmt) {
             errs = errs.concat(tmp.errs);
         }
     }
-    if (fmt.type === 'array') {
+    if (fmt.type === "array") {
         if (!Array.isArray(v)) {
             errs.push({ field: fmt.name, type: "array" });
         }
@@ -133,24 +133,28 @@ function parseArg(v, de, fmt) {
         }
         else {
             for (var prop in fmt.items.properties) {
-                var tmp = parseArg(v[prop], v[prop], fmt.items.properties[prop]);
-                v[prop] = tmp.arg;
-                errs = errs.concat(tmp.errs);
+                if (fmt.items.properties.hasOwnProperty(prop)) {
+                    var tmp = parseArg(v[prop], v[prop], fmt.items.properties[prop]);
+                    v[prop] = tmp.arg;
+                    errs = errs.concat(tmp.errs);
+                }
             }
             if (fmt.items.required && fmt.items.required.length) {
                 var requires = fmt.items.required;
-                for (var i = 0; i < requires.length; i++) {
-                    var require_1 = requires[i];
-                    for (var j = 0; j < v.length; j++) {
-                        if (typeof v[j][require_1] === 'undefined') {
-                            errs.push({ field: fmt.name + '.' + require_1, type: "required" });
+                for (var _i = 0, requires_1 = requires; _i < requires_1.length; _i++) {
+                    var ii = requires_1[_i];
+                    var require_1 = ii;
+                    for (var _a = 0, v_1 = v; _a < v_1.length; _a++) {
+                        var jj = v_1[_a];
+                        if (typeof jj[require_1] === "undefined") {
+                            errs.push({ field: fmt.name + "." + require_1, type: "required" });
                         }
                     }
                 }
             }
         }
     }
-    if (fmt.type === 'boolean' && typeof v !== 'boolean') {
+    if (fmt.type === "boolean" && typeof v !== "boolean") {
         errs.push({ field: fmt.name, type: "boolean" });
     }
     return { arg: v, errs: errs };
@@ -159,15 +163,18 @@ function parseObjectSchema(obj, schema) {
     var errs = [];
     var arg = {};
     var properties = schema.properties || [];
-    if (schema.type !== 'object') {
+    if (schema.type !== "object") {
         throw notSupportError;
     }
     if (schema.required) {
         for (var prop in properties) {
-            if (typeof obj[prop] === 'undefined' && typeof properties[prop].default !== 'undefined') {
+            if (!properties.hasOwnProperty(prop)) {
+                continue;
+            }
+            if (typeof obj[prop] === "undefined" && typeof properties[prop].default !== "undefined") {
                 obj[prop] = properties[prop].default;
             }
-            else if (typeof obj[prop] === 'undefined') {
+            else if (typeof obj[prop] === "undefined") {
                 continue;
             }
             arg[prop] = obj[prop];
@@ -178,9 +185,10 @@ function parseObjectSchema(obj, schema) {
             obj[prop] = tmp.arg;
             errs = errs.concat(tmp.errs);
         }
-        for (var i = 0; i < schema.required.length; i++) {
-            var prop = schema.required[i];
-            if (typeof obj[prop] === 'undefined') {
+        for (var _i = 0, _a = schema.required; _i < _a.length; _i++) {
+            var ii = _a[_i];
+            var prop = ii;
+            if (typeof obj[prop] === "undefined") {
                 errs.push({ field: prop, type: "required" });
             }
         }
@@ -192,33 +200,34 @@ var RestMiddleware = (function () {
     }
     RestMiddleware.processArgAsync = function (preCtrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var errs, arg, req, route, i, param, q, de, tmp_1, tmp, err;
-            return __generator(this, function (_a) {
+            var errs, arg, req, route, _i, _a, ii, param, de, tmp_1, tmp, err;
+            return __generator(this, function (_b) {
                 errs = [];
                 arg = {};
                 req = preCtrl.req;
                 route = preCtrl.route;
                 try {
                     if (route.parameters) {
-                        for (i = 0; i < route.parameters.length; i++) {
-                            param = route.parameters[i];
-                            q = void 0, de = void 0;
-                            if (param.in === 'path' && typeof (req.params[param.name]) !== 'undefined') {
+                        for (_i = 0, _a = route.parameters; _i < _a.length; _i++) {
+                            ii = _a[_i];
+                            param = ii;
+                            de = void 0;
+                            if (param.in === "path" && typeof (req.params[param.name]) !== "undefined") {
                                 de = req.params[param.name];
                                 arg[param.name] = convertion(de, param);
                             }
-                            if (param.in === 'query' && typeof (req.query[param.name]) !== 'undefined') {
+                            if (param.in === "query" && typeof (req.query[param.name]) !== "undefined") {
                                 de = req.query[param.name];
                                 arg[param.name] = convertion(de, param);
                             }
-                            if (param.in === 'formData' && typeof (req.body[param.name]) !== 'undefined') {
+                            if (param.in === "formData" && typeof (req.body[param.name]) !== "undefined") {
                                 de = req.body[param.name];
                                 arg[param.name] = convertion(de, param);
                             }
-                            if (param.in === 'body') {
+                            if (param.in === "body") {
                                 // if dont define properties, use req.body in controller
-                                if (param.required && typeof req.body === 'undefined') {
-                                    errs.push({ field: param.name, type: 'required' });
+                                if (param.required && typeof req.body === "undefined") {
+                                    errs.push({ field: param.name, type: "required" });
                                 }
                                 else if (!param.schema || !param.schema.properties) {
                                     throw notSupportError;
@@ -237,9 +246,9 @@ var RestMiddleware = (function () {
                     }
                     if (errs.length) {
                         err = {
-                            statusCode: 400,
+                            data: errs,
                             errorCode: ref_1.ErrorCode.REST_PARAM_ERROR,
-                            data: errs
+                            statusCode: 400,
                         };
                         throw err;
                     }

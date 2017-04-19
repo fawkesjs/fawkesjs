@@ -61,7 +61,7 @@ export class Fawkes {
       ],
       "schemes": [
         "http",
-      ], ,
+      ],
       "securityDefinitions": {
         "api_scheme_name": {
           "in": "header",

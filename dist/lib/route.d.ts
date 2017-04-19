@@ -1,6 +1,6 @@
 import * as express from "express";
-import { IRoutes, IRoutesConfig } from "../interfaces";
+import { IRoute, IRoutesConfig } from "../interfaces";
 export declare class Route {
-    static activate(app: express.Express, routes: IRoutes, prefix: string, routesConfig: IRoutesConfig): void;
-    static swagger(routes: IRoutes, prefix: string): {};
+    static activate(app: express.Express, routes: IRoute[], prefix: string, routesConfig: IRoutesConfig): void;
+    static swagger(routes: IRoute[], prefix: string): {};
 }

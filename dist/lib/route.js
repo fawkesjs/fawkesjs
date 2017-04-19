@@ -1,6 +1,6 @@
 "use strict";
-var _ = require("underscore");
 var path = require("path");
+var _ = require("underscore");
 var config_1 = require("../config");
 var helper_1 = require("../lib/helper");
 var Route = (function () {
@@ -9,22 +9,24 @@ var Route = (function () {
     Route.activate = function (app, routes, prefix, routesConfig) {
         var _loop_1 = function (route) {
             var remote = route.remote;
-            remote = remote.replace('{', ':').replace('}', '');
+            remote = remote.replace("{", ":").replace("}", "");
             app.route(prefix + remote)[route.method](function (req, res, next) {
                 var preCtrls = [];
                 if (routesConfig.preCtrls) {
                     preCtrls = routesConfig.preCtrls;
                 }
                 else {
-                    for (var _i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir + config_1.Config.get().middlewareDir + '/index' + config_1.Config.get().extension); _i < _a.length; _i++) {
+                    for (var _i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir
+                        + config_1.Config.get().middlewareDir + "/index" + config_1.Config.get().extension); _i < _a.length; _i++) {
                         var o = _a[_i];
                         var tmp = require(path.resolve(o));
                         preCtrls = tmp.preCtrls;
                     }
                 }
                 var sequence = Promise.resolve({ route: route, req: req });
-                for (var i = 0; i < preCtrls.length; i++) {
-                    sequence = sequence.then(preCtrls[i]);
+                for (var _b = 0, preCtrls_1 = preCtrls; _b < preCtrls_1.length; _b++) {
+                    var preCtrl = preCtrls_1[_b];
+                    sequence = sequence.then(preCtrl);
                 }
                 sequence
                     .then(function (data) {
@@ -54,33 +56,33 @@ var Route = (function () {
             if (!path[prefix + remote]) {
                 path[prefix + remote] = {};
             }
-            var tmp = (remote[0] == '/') ? remote.substr(1) : remote;
-            var tmp2 = (prefix[0] == '/') ? prefix.substr(1) : prefix;
-            tmp = tmp.substr(0, tmp.indexOf('/'));
-            var tag = tmp.length ? tmp2 + '/' + tmp : tmp2;
-            tag = tag.replace('/', '_');
+            var tmp = (remote[0] === "/") ? remote.substr(1) : remote;
+            var tmp2 = (prefix[0] === "/") ? prefix.substr(1) : prefix;
+            tmp = tmp.substr(0, tmp.indexOf("/"));
+            var tag = tmp.length ? tmp2 + "/" + tmp : tmp2;
+            tag = tag.replace("/", "_");
             path[prefix + remote][route.method] = {
-                "tags": [tag],
-                "produces": [
-                    "application/json"
-                ],
                 "consumes": [
+                    "application/json",
+                ],
+                "produces": [
                     "application/json",
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "Success",
                     },
                     "400": {
-                        "description": "Bad Param"
+                        "description": "Bad Param",
                     },
                     "401": {
-                        "description": "Authorization Required"
-                    }
-                }
+                        "description": "Authorization Required",
+                    },
+                },
+                "tags": [tag],
             };
             if (route.parameters) {
-                path[prefix + remote][route.method]["parameters"] = route.parameters;
+                path[prefix + remote][route.method].parameters = route.parameters;
             }
             if (route.swagger) {
                 _.extend(path[prefix + remote][route.method], route.swagger);

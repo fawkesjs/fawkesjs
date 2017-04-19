@@ -34,22 +34,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var path = require("path");
-var express = require("express");
 var bodyParser = require("body-parser");
-var _ = require("underscore");
+var express = require("express");
 var fs = require("fs");
-var helper_1 = require("../lib/helper");
+var path = require("path");
+var _ = require("underscore");
 var config_1 = require("../config");
-var orm_1 = require("../orm");
+var helper_1 = require("../lib/helper");
 var route_1 = require("../lib/route");
+var orm_1 = require("../orm");
 var Fawkes = (function () {
     function Fawkes() {
     }
     Fawkes.activateRoute = function (app) {
         var preRoute = config_1.Config.get().outDir + config_1.Config.get().routeDir;
-        var postRoute = '/index' + config_1.Config.get().extension;
-        for (var _i = 0, _a = helper_1.Helper.globFiles(preRoute + '/**' + postRoute); _i < _a.length; _i++) {
+        var postRoute = "/index" + config_1.Config.get().extension;
+        for (var _i = 0, _a = helper_1.Helper.globFiles(preRoute + "/**" + postRoute); _i < _a.length; _i++) {
             var route = _a[_i];
             var theRoute = require(path.resolve(route));
             route = route.substring(preRoute.length);
@@ -60,7 +60,7 @@ var Fawkes = (function () {
     };
     Fawkes.initClass = function () {
         config_1.Config.get();
-        if (typeof config_1.Config.ormDir === 'string') {
+        if (typeof config_1.Config.ormDir === "string") {
             orm_1.Orm.get();
         }
     };
@@ -76,57 +76,59 @@ var Fawkes = (function () {
             var preRoute, postRoute, sj, env, _i, _a, o, tmp, _b, _c, o, tmp, _d, _e, route, theRoute;
             return __generator(this, function (_f) {
                 preRoute = config_1.Config.get().outDir + config_1.Config.get().routeDir;
-                postRoute = '/index' + config_1.Config.get().extension;
+                postRoute = "/index" + config_1.Config.get().extension;
                 sj = {
-                    "swagger": "2.0",
-                    "info": {
-                        "version": "1.0.0",
-                        "title": "Swagger",
-                        "description": "A sample API that uses swagger-2.0 specification",
-                        "termsOfService": "http://swagger.io/terms/",
-                        "contact": {
-                            "name": "Swagger API Team"
-                        },
-                        "license": {
-                            "name": "MIT"
-                        }
-                    },
-                    "schemes": [
-                        "http"
-                    ],
                     "consumes": [
-                        "application/json"
+                        "application/json",
                     ],
-                    "produces": [
-                        "application/json"
-                    ],
-                    "paths": {},
                     "definitions": {},
+                    "info": {
+                        "contact": {
+                            "name": "Swagger API Team",
+                        },
+                        "description": "A sample API that uses swagger-2.0 specification",
+                        "license": {
+                            "name": "MIT",
+                        },
+                        "termsOfService": "http://swagger.io/terms/",
+                        "title": "Swagger",
+                        "version": "1.0.0",
+                    },
+                    "paths": {},
+                    "produces": [
+                        "application/json",
+                    ],
+                    "schemes": [
+                        "http",
+                    ],
                     "securityDefinitions": {
                         "api_scheme_name": {
-                            "type": "apiKey",
+                            "in": "header",
                             "name": "Authorization",
-                            "in": "header"
-                        }
-                    }
+                            "type": "apiKey",
+                        },
+                    },
+                    "swagger": "2.0",
                 };
                 env = process.env.NODE_ENV || "development";
-                for (_i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir + config_1.Config.get().configDir + '/swagger' + config_1.Config.get().extension); _i < _a.length; _i++) {
+                for (_i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir
+                    + config_1.Config.get().configDir + "/swagger" + config_1.Config.get().extension); _i < _a.length; _i++) {
                     o = _a[_i];
                     tmp = require(path.resolve(o));
                     _.extend(sj, tmp);
                 }
-                for (_b = 0, _c = helper_1.Helper.globFiles(config_1.Config.get().outDir + config_1.Config.get().configDir + '/swagger.' + env + config_1.Config.get().extension); _b < _c.length; _b++) {
+                for (_b = 0, _c = helper_1.Helper.globFiles(config_1.Config.get().outDir + config_1.Config.get().configDir
+                    + "/swagger." + env + config_1.Config.get().extension); _b < _c.length; _b++) {
                     o = _c[_b];
                     tmp = require(path.resolve(o));
                     _.extend(sj, tmp);
                 }
-                for (_d = 0, _e = helper_1.Helper.globFiles(preRoute + '/**' + postRoute); _d < _e.length; _d++) {
+                for (_d = 0, _e = helper_1.Helper.globFiles(preRoute + "/**" + postRoute); _d < _e.length; _d++) {
                     route = _e[_d];
                     theRoute = require(path.resolve(route));
                     route = route.substring(preRoute.length);
                     route = route.substring(route.length - postRoute.length, -1);
-                    if (theRoute.config && typeof theRoute.config.swagger !== 'undefined' && theRoute.config.swagger === false) {
+                    if (theRoute.config && typeof theRoute.config.swagger !== "undefined" && theRoute.config.swagger === false) {
                         continue;
                     }
                     _.extend(sj.paths, route_1.Route.swagger(theRoute.routes, route));

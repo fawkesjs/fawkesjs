@@ -19,11 +19,11 @@ export interface IPreCtrl {
 }
 export interface IRoute {
     remote: string;
-    func(ctrl: ICtrl): any;
     method: string;
     acl?: any;
     swagger?: any;
-    parameters?: IRouteParameters;
+    parameters?: IRouteParameter[];
+    func(ctrl: ICtrl): any;
 }
 export interface IRouteParameter {
     name: string;
@@ -56,11 +56,7 @@ export interface IError {
     message?: string;
     data?: any;
 }
-export interface IRouteParameters extends Array<IRouteParameter> {
-}
-export interface IRoutes extends Array<IRoute> {
-}
 export interface IRoutesConfig {
     swagger?: boolean;
-    preCtrls?: Array<any>;
+    preCtrls?: any[];
 }
