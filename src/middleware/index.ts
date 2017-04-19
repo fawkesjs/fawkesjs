@@ -72,7 +72,7 @@ function parseArg(v, de, fmt): IParseArg {
     if (typeof v !== 'object') {
       errs.push({ field: fmt.name, type: "object" })
     } else {
-      let tmp = parseObjectSchema(v, fmt.schema)
+      let tmp = parseObjectSchema(v, fmt)
       v = tmp.arg
       errs = errs.concat(tmp.errs)
     }
