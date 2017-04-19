@@ -60,7 +60,9 @@ var Fawkes = (function () {
     };
     Fawkes.initClass = function () {
         config_1.Config.get();
-        orm_1.Orm.get();
+        if (typeof config_1.Config.ormDir === 'string') {
+            orm_1.Orm.get();
+        }
     };
     Fawkes.app = function () {
         Fawkes.initClass();

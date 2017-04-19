@@ -31,7 +31,7 @@ function convertion(q, tmp:IRouteParameter) {
 }
 function parseArg(v, de, fmt): IParseArg {
   let errs = []
-  if (fmt.default && typeof v === 'undefined') {
+  if (typeof fmt.default !== 'undefined' && typeof v === 'undefined') {
     v = fmt.default
   }
   if (fmt.required && typeof v === 'undefined') {
@@ -47,9 +47,9 @@ function parseArg(v, de, fmt): IParseArg {
   if (fmt.type === 'string') {
     if (typeof v !== 'string') {
       errs.push({ field: fmt.name, type: "string" })
-    } else if (fmt.format === 'uuid' && !validator.isUUID(v)) {
+    } else if (v !== fmt.default && fmt.format === 'uuid' && !validator.isUUID(v)) {
       errs.push({ field: fmt.name, type: "uuid" })
-    } else if (fmt.format === 'email' && !validator.isEmail(v)) {
+    } else if (v !== fmt.default && fmt.format === 'email' && !validator.isEmail(v)) {
       errs.push({ field: fmt.name, type: "email" })
     } else if (!validator.isLength(v, lengthOpt)) {
       errs.push({ field: fmt.name, type: "strlen" })
