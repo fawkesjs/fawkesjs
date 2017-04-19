@@ -1,17 +1,19 @@
 #!/usr/bin/env node
-import * as program from 'commander'
-import { Fawkes } from '../lib/fawkes'
-require('ts-node/register')
+import * as program from "commander";
+import "ts-node/register";
+import { Fawkes } from "../lib/fawkes";
 program
-  .version('0.0.1')
-  .option('-s, --swagger [value]', 'generate swagger document location')
+  .version("0.0.1")
+  .option("-s, --swagger [value]", "generate swagger document location");
 program.parse(process.argv);
 if (program.swagger) {
   Fawkes.generateSwaggerAsync(program.swagger)
-    .then(tmp => {
-      console.log(tmp)
+    .then((tmp) => {
+      // tslint:disable-next-line no-console
+      console.log(tmp);
     })
-    .catch(err => {
-      console.log(err)
-    })
+    .catch((err) => {
+      // tslint:disable-next-line no-console
+      console.log(err);
+    });
 }
