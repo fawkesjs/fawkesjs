@@ -78,37 +78,37 @@ var Fawkes = (function () {
                 preRoute = config_1.Config.get().outDir + config_1.Config.get().routeDir;
                 postRoute = "/index" + config_1.Config.get().extension;
                 sj = {
-                    "consumes": [
+                    consumes: [
                         "application/json",
                     ],
-                    "definitions": {},
-                    "info": {
-                        "contact": {
-                            "name": "Swagger API Team",
+                    definitions: {},
+                    info: {
+                        contact: {
+                            name: "Swagger API Team",
                         },
-                        "description": "A sample API that uses swagger-2.0 specification",
-                        "license": {
-                            "name": "MIT",
+                        description: "A sample API that uses swagger-2.0 specification",
+                        license: {
+                            name: "MIT",
                         },
-                        "termsOfService": "http://swagger.io/terms/",
-                        "title": "Swagger",
-                        "version": "1.0.0",
+                        termsOfService: "http://swagger.io/terms/",
+                        title: "Swagger",
+                        version: "1.0.0",
                     },
-                    "paths": {},
-                    "produces": [
+                    paths: {},
+                    produces: [
                         "application/json",
                     ],
-                    "schemes": [
+                    schemes: [
                         "http",
                     ],
-                    "securityDefinitions": {
-                        "api_scheme_name": {
-                            "in": "header",
-                            "name": "Authorization",
-                            "type": "apiKey",
+                    securityDefinitions: {
+                        api_scheme_name: {
+                            in: "header",
+                            name: "Authorization",
+                            type: "apiKey",
                         },
                     },
-                    "swagger": "2.0",
+                    swagger: "2.0",
                 };
                 env = process.env.NODE_ENV || "development";
                 for (_i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir

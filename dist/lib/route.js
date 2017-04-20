@@ -62,24 +62,24 @@ var Route = (function () {
             var tag = tmp.length ? tmp2 + "/" + tmp : tmp2;
             tag = tag.replace("/", "_");
             path[prefix + remote][route.method] = {
-                "consumes": [
+                consumes: [
                     "application/json",
                 ],
-                "produces": [
+                produces: [
                     "application/json",
                 ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
+                responses: {
+                    200: {
+                        description: "Success",
                     },
-                    "400": {
-                        "description": "Bad Param",
+                    400: {
+                        description: "Bad Param",
                     },
-                    "401": {
-                        "description": "Authorization Required",
+                    401: {
+                        description: "Authorization Required",
                     },
                 },
-                "tags": [tag],
+                tags: [tag],
             };
             if (route.parameters) {
                 path[prefix + remote][route.method].parameters = route.parameters;
