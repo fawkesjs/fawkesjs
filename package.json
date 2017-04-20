@@ -11,7 +11,9 @@
   "bin": {
     "fawkesjs": "dist/bin/fawkes.js"
   },
-  "engines" : { "node" : ">=7.6.0" },
+  "engines": {
+    "node": ">=7.6.0"
+  },
   "typings": "./dist/index.d.ts",
   "author": "nghenglim",
   "license": "MIT",
@@ -26,7 +28,11 @@
   },
   "devDependencies": {
     "@types/node": "^7.0.1",
-    "typescript": "^2.1.5",
-    "tslint": "^5.1.0"
-  }
+    "pre-push": "^0.1.1",
+    "tslint": "^5.1.0",
+    "typescript": "^2.1.5"
+  },
+  "pre-push": [
+    "lint"
+  ]
 }
