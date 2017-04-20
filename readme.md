@@ -6,13 +6,19 @@
 [![Chat on Gitter](https://badges.gitter.im/fawkesjs/fawkesjs.svg)](https://gitter.im/fawkesjs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## System Requirement
-- Nodejs 7.6 or above (for the support of async await)
+- Nodejs 7.6 or above (for the default support of async await)
 
 ## Usage
-~~~
+```bash
 git clone https://github.com/fawkesjs/fawkesjs-starter
-follow the readme of that repo
-~~~
+cd fawkesjs-starter
+npm install && npm run start # swagger at http://localhost:5000/swagger
+```
+
+### Common Command
+- Generating Swagger: `npm run swagger`
+- Full Migrate DB: `npm run db:sync`
+- Restart App: `node .` or `nodemon ./index.js -e ts --watch app`
 
 ## Some Note
 FawkesJs-starter comes default with configuration suits for new project, such as using with postgres, api and web in same project.
