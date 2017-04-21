@@ -6,7 +6,8 @@
   "scripts": {
     "prepublish": "tsc",
     "test": "node test/test.js",
-    "lint": "tslint src/**/*.ts"
+    "lint": "tslint src/**/*.ts",
+    "doc": "typedoc --options typedoc.json src/**.ts"
   },
   "bin": {
     "fawkesjs": "dist/bin/fawkes.js"

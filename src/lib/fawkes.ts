@@ -7,6 +7,10 @@ import { Config } from "../config";
 import { Helper } from "../lib/helper";
 import { Route } from "../lib/route";
 import { Orm } from "../orm";
+
+/**
+ * This is the main class to do config initiation.
+ */
 export class Fawkes {
   public static activateRoute(app) {
     const preRoute = Config.get().outDir + Config.get().routeDir;
