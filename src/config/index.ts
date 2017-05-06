@@ -5,7 +5,7 @@ export class Config {
   public static port: number = 3000;
   public static init: boolean = false;
   public static outDir: string = "./app";
-  public static extension: string = ".ts";
+  public static extension: string = ".js";
   public static configDir: string = "/config";
   public static middlewareDir: string = "/middleware";
   public static routeDir: string = "/route";

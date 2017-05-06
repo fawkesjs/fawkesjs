@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 "use strict";
 var program = require("commander");
-require("ts-node/register");
 var fawkes_1 = require("../lib/fawkes");
 program
     .version("0.0.1")

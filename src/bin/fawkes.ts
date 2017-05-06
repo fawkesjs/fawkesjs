@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import * as program from "commander";
-import "ts-node/register";
 import { Fawkes } from "../lib/fawkes";
 program
   .version("0.0.1")

@@ -43,6 +43,9 @@ var config_1 = require("../config");
 var helper_1 = require("../lib/helper");
 var route_1 = require("../lib/route");
 var orm_1 = require("../orm");
+/**
+ * This is the main class to do config initiation.
+ */
 var Fawkes = (function () {
     function Fawkes() {
     }
