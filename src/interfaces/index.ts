@@ -25,6 +25,7 @@ export interface IRoute {
   swagger?: any;
   parameters?: IRouteParameter[];
   func(ctrl: ICtrl);
+  errHandler?(err: any, res: express.Response);
 }
 export interface IRouteParameter {
   name: string;
@@ -61,4 +62,5 @@ export interface IError {
 export interface IRoutesConfig {
   swagger?: boolean;
   preCtrls?: any[];
+  errHandler?(err: any, res: express.Response);
 }

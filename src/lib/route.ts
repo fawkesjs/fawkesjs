@@ -13,6 +13,12 @@ export class Route {
       app.route(prefix + remote)[route.method](
         (req, res, next) => {
           let preCtrls = [];
+          let errHandler = Helper.errCb;
+          if (route.errHandler) {
+            errHandler = route.errHandler;
+          } else if (routesConfig.errHandler) {
+            errHandler = routesConfig.errHandler;
+          }
           if (routesConfig.preCtrls) {
             preCtrls = routesConfig.preCtrls;
           } else {
@@ -34,7 +40,7 @@ export class Route {
               route.func(ctrl);
             })
             .catch((err) => {
-              Helper.errCb(err, res);
+              errHandler(err, res);
             });
         },
       );

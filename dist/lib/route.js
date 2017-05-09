@@ -12,6 +12,13 @@ var Route = (function () {
             remote = remote.replace("{", ":").replace("}", "");
             app.route(prefix + remote)[route.method](function (req, res, next) {
                 var preCtrls = [];
+                var errHandler = helper_1.Helper.errCb;
+                if (route.errHandler) {
+                    errHandler = route.errHandler;
+                }
+                else if (routesConfig.errHandler) {
+                    errHandler = routesConfig.errHandler;
+                }
                 if (routesConfig.preCtrls) {
                     preCtrls = routesConfig.preCtrls;
                 }
@@ -36,7 +43,7 @@ var Route = (function () {
                     route.func(ctrl);
                 })
                     .catch(function (err) {
-                    helper_1.Helper.errCb(err, res);
+                    errHandler(err, res);
                 });
             });
         };
