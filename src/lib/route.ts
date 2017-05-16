@@ -18,6 +18,14 @@ export class Route {
             errHandler = route.errHandler;
           } else if (routesConfig.errHandler) {
             errHandler = routesConfig.errHandler;
+          } else {
+            for (const o of Helper.globFiles(Config.get().outDir
+            + Config.get().middlewareDir + "/index" + Config.get().extension)) {
+              const tmp = require(path.resolve(o));
+              if (tmp.errHandler) {
+                errHandler = tmp.errHandler;
+              }
+            }
           }
           if (routesConfig.preCtrls) {
             preCtrls = routesConfig.preCtrls;
@@ -25,7 +33,9 @@ export class Route {
             for (const o of Helper.globFiles(Config.get().outDir
             + Config.get().middlewareDir + "/index" + Config.get().extension)) {
               const tmp = require(path.resolve(o));
-              preCtrls = tmp.preCtrls;
+              if (tmp.preCtrls) {
+                preCtrls = tmp.preCtrls;
+              }
             }
           }
           let sequence = Promise.resolve({ route, req });

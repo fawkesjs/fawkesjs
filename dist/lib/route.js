@@ -19,20 +19,32 @@ var Route = (function () {
                 else if (routesConfig.errHandler) {
                     errHandler = routesConfig.errHandler;
                 }
-                if (routesConfig.preCtrls) {
-                    preCtrls = routesConfig.preCtrls;
-                }
                 else {
                     for (var _i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir
                         + config_1.Config.get().middlewareDir + "/index" + config_1.Config.get().extension); _i < _a.length; _i++) {
                         var o = _a[_i];
                         var tmp = require(path.resolve(o));
-                        preCtrls = tmp.preCtrls;
+                        if (tmp.errHandler) {
+                            errHandler = tmp.errHandler;
+                        }
+                    }
+                }
+                if (routesConfig.preCtrls) {
+                    preCtrls = routesConfig.preCtrls;
+                }
+                else {
+                    for (var _b = 0, _c = helper_1.Helper.globFiles(config_1.Config.get().outDir
+                        + config_1.Config.get().middlewareDir + "/index" + config_1.Config.get().extension); _b < _c.length; _b++) {
+                        var o = _c[_b];
+                        var tmp = require(path.resolve(o));
+                        if (tmp.preCtrls) {
+                            preCtrls = tmp.preCtrls;
+                        }
                     }
                 }
                 var sequence = Promise.resolve({ route: route, req: req });
-                for (var _b = 0, preCtrls_1 = preCtrls; _b < preCtrls_1.length; _b++) {
-                    var preCtrl = preCtrls_1[_b];
+                for (var _d = 0, preCtrls_1 = preCtrls; _d < preCtrls_1.length; _d++) {
+                    var preCtrl = preCtrls_1[_d];
                     sequence = sequence.then(preCtrl);
                 }
                 sequence
