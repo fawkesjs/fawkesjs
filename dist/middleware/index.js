@@ -95,10 +95,7 @@ function parseArg(v, de, fmt) {
         if (typeof v !== "number") {
             errs.push({ field: fmt.name, type: "number" });
         }
-        else if (v !== de) {
-            errs.push({ field: fmt.name, type: fmt.type });
-        }
-        else if (!isInt(v)) {
+        else if (!isInt(v) && fmt.type === "integer") {
             errs.push({ field: fmt.name, type: "integer" });
         }
         else if (typeof fmt.maximum !== "undefined" && v > fmt.maximum) {

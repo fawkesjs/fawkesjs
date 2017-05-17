@@ -58,9 +58,7 @@ function parseArg(v, de, fmt): IParseArg {
   if (numberTypes.indexOf(fmt.type) !== -1) {
     if (typeof v !== "number") {
       errs.push({ field: fmt.name, type: "number" });
-    } else if (v !== de) { // this condition might happen if not pass from body
-      errs.push({ field: fmt.name, type: fmt.type });
-    } else if (!isInt(v)) {
+    } else if (!isInt(v) && fmt.type === "integer") {
       errs.push({ field: fmt.name, type: "integer" });
     } else if (typeof fmt.maximum !== "undefined" && v > fmt.maximum) {
       errs.push({ field: fmt.name, type: "maximum" });
