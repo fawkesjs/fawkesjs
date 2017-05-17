@@ -47,7 +47,7 @@ export class Route {
               delete data.route;
               data.res = res;
               const ctrl: ICtrl = data;
-              route.func(ctrl);
+              return route.func(ctrl);
             })
             .catch((err) => {
               errHandler(err, res);

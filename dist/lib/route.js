@@ -52,7 +52,7 @@ var Route = (function () {
                     delete data.route;
                     data.res = res;
                     var ctrl = data;
-                    route.func(ctrl);
+                    return route.func(ctrl);
                 })
                     .catch(function (err) {
                     errHandler(err, res);
