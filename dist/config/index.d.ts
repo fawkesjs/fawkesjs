@@ -10,4 +10,5 @@ export declare class Config {
     static useSequelize: boolean;
     static datasource: any;
     static get(): typeof Config;
+    private static configKey;
 }

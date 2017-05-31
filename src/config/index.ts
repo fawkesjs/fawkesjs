@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as _ from "underscore";
-import {Helper} from "../lib/helper";
+import { Helper } from "../lib/helper";
 export class Config {
   public static port: number = 3000;
   public static init: boolean = false;
@@ -20,19 +20,27 @@ export class Config {
       const env = process.env.NODE_ENV || "development";
       for (const o of Helper.globFiles(Config.outDir + Config.configDir + "/config" + Config.extension)) {
         const tmp = require(path.resolve(o));
-        _.extend(Config, tmp);
+        for (const v in tmp) {
+          if (tmp.hasOwnProperty(v) && this.configKey.indexOf(v) !== -1) {
+            Config[v] = tmp[v];
+          }
+        }
       }
       for (const o of Helper.globFiles(Config.outDir + Config.configDir + "/config." + env + Config.extension)) {
         const tmp = require(path.resolve(o));
-        _.extend(Config, tmp);
+        for (const v in tmp) {
+          if (tmp.hasOwnProperty(v) && this.configKey.indexOf(v) !== -1) {
+            Config[v] = tmp[v];
+          }
+        }
       }
       for (const o of Helper.globFiles(Config.outDir + Config.configDir + "/datasource" + Config.extension)) {
         const tmp = require(path.resolve(o));
-        _.extend(Config.datasource, tmp);
+        Config.datasource = tmp;
       }
       for (const o of Helper.globFiles(Config.outDir + Config.configDir + "/datasource." + env + Config.extension)) {
         const tmp = require(path.resolve(o));
-        _.extend(Config.datasource, tmp);
+        Config.datasource = tmp;
       }
       Config.init = true;
       for (const prop in Config) {
@@ -45,4 +53,7 @@ export class Config {
       return Config;
     }
   }
+  private static configKey: string[] = [
+    "port", "init", "outDir", "middlewareDir", "routeDir", "ormDir", "useSequelize",
+  ];
 }

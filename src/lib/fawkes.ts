@@ -12,6 +12,9 @@ import { Orm } from "../orm";
  * This is the main class to do config initiation.
  */
 export class Fawkes {
+  /**
+   * express routing base on our route folder
+   */
   public static activateRoute(app) {
     const preRoute = Config.get().outDir + Config.get().routeDir;
     const postRoute = "/index" + Config.get().extension;
@@ -29,6 +32,9 @@ export class Fawkes {
       Orm.get();
     }
   }
+  /**
+   * initializing our config and orm and returning express app
+   */
   public static app() {
     Fawkes.initClass();
     const app: express.Express = express();
@@ -36,6 +42,10 @@ export class Fawkes {
     app.use(bodyParser.urlencoded({ extended: true }));
     return app;
   }
+
+  /**
+   * for generating swagger document, which is triggered when we call fawkesjs -s ./swagger/swagger.json
+   */
   public static async generateSwaggerAsync(location) {
     const preRoute = Config.get().outDir + Config.get().routeDir;
     const postRoute = "/index" + Config.get().extension;

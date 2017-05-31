@@ -38,20 +38,21 @@ export class Route {
               }
             }
           }
-          let sequence = Promise.resolve({ route, req });
-          for (const preCtrl of preCtrls) {
-            sequence = sequence.then(preCtrl);
-          }
-          sequence
-            .then((data: any) => {
+          async function doSequence() {
+            try {
+              let data: any = { route, req };
+              for (const preCtrl of preCtrls) {
+                data = await preCtrl(data);
+              }
               delete data.route;
               data.res = res;
               const ctrl: ICtrl = data;
               return route.func(ctrl);
-            })
-            .catch((err) => {
+            } catch (err) {
               errHandler(err, res);
-            });
+            }
+          }
+          doSequence();
         },
       );
     }

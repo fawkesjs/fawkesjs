@@ -1,6 +1,5 @@
 "use strict";
 var path = require("path");
-var _ = require("underscore");
 var helper_1 = require("../lib/helper");
 var Config = (function () {
     function Config() {
@@ -11,22 +10,30 @@ var Config = (function () {
             for (var _i = 0, _a = helper_1.Helper.globFiles(Config.outDir + Config.configDir + "/config" + Config.extension); _i < _a.length; _i++) {
                 var o = _a[_i];
                 var tmp = require(path.resolve(o));
-                _.extend(Config, tmp);
+                for (var v in tmp) {
+                    if (tmp.hasOwnProperty(v) && this.configKey.indexOf(v) !== -1) {
+                        Config[v] = tmp[v];
+                    }
+                }
             }
             for (var _b = 0, _c = helper_1.Helper.globFiles(Config.outDir + Config.configDir + "/config." + env + Config.extension); _b < _c.length; _b++) {
                 var o = _c[_b];
                 var tmp = require(path.resolve(o));
-                _.extend(Config, tmp);
+                for (var v in tmp) {
+                    if (tmp.hasOwnProperty(v) && this.configKey.indexOf(v) !== -1) {
+                        Config[v] = tmp[v];
+                    }
+                }
             }
             for (var _d = 0, _e = helper_1.Helper.globFiles(Config.outDir + Config.configDir + "/datasource" + Config.extension); _d < _e.length; _d++) {
                 var o = _e[_d];
                 var tmp = require(path.resolve(o));
-                _.extend(Config.datasource, tmp);
+                Config.datasource = tmp;
             }
             for (var _f = 0, _g = helper_1.Helper.globFiles(Config.outDir + Config.configDir + "/datasource." + env + Config.extension); _f < _g.length; _f++) {
                 var o = _g[_f];
                 var tmp = require(path.resolve(o));
-                _.extend(Config.datasource, tmp);
+                Config.datasource = tmp;
             }
             Config.init = true;
             for (var prop in Config) {
@@ -54,4 +61,7 @@ Config.useSequelize = true;
 Config.datasource = {
     db: {},
 };
+Config.configKey = [
+    "port", "init", "outDir", "middlewareDir", "routeDir", "ormDir", "useSequelize",
+];
 exports.Config = Config;

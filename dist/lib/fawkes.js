@@ -49,6 +49,9 @@ var orm_1 = require("../orm");
 var Fawkes = (function () {
     function Fawkes() {
     }
+    /**
+     * express routing base on our route folder
+     */
     Fawkes.activateRoute = function (app) {
         var preRoute = config_1.Config.get().outDir + config_1.Config.get().routeDir;
         var postRoute = "/index" + config_1.Config.get().extension;
@@ -67,6 +70,9 @@ var Fawkes = (function () {
             orm_1.Orm.get();
         }
     };
+    /**
+     * initializing our config and orm and returning express app
+     */
     Fawkes.app = function () {
         Fawkes.initClass();
         var app = express();
@@ -74,6 +80,9 @@ var Fawkes = (function () {
         app.use(bodyParser.urlencoded({ extended: true }));
         return app;
     };
+    /**
+     * for generating swagger document, which is triggered when we call fawkesjs -s ./swagger/swagger.json
+     */
     Fawkes.generateSwaggerAsync = function (location) {
         return __awaiter(this, void 0, void 0, function () {
             var preRoute, postRoute, sj, env, _i, _a, o, tmp, _b, _c, o, tmp, _d, _e, route, theRoute;
