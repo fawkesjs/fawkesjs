@@ -22,6 +22,9 @@ export class Helper {
   }
   public static objGet(obj: any, fmt: string, o: any) {
     let v = obj;
+    if (typeof v !== "object") {
+      return o;
+    }
     const fmts = fmt.split(".");
     for (const theFmt of fmts) {
       if (typeof v[theFmt] !== "undefined") {

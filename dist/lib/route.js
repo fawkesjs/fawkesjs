@@ -83,7 +83,7 @@ var Route = (function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
-                                    _a.trys.push([0, 5, , 6]);
+                                    _a.trys.push([0, 6, , 7]);
                                     data = { route: route, req: req };
                                     _i = 0, preCtrls_1 = preCtrls;
                                     _a.label = 1;
@@ -101,12 +101,15 @@ var Route = (function () {
                                     delete data.route;
                                     data.res = res;
                                     ctrl = data;
-                                    return [2 /*return*/, route.func(ctrl)];
+                                    return [4 /*yield*/, route.func(ctrl)];
                                 case 5:
+                                    _a.sent();
+                                    return [3 /*break*/, 7];
+                                case 6:
                                     err_1 = _a.sent();
                                     errHandler(err_1, res);
-                                    return [3 /*break*/, 6];
-                                case 6: return [2 /*return*/];
+                                    return [3 /*break*/, 7];
+                                case 7: return [2 /*return*/];
                             }
                         });
                     });
