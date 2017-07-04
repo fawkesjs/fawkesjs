@@ -22,7 +22,8 @@ export class Helper {
   }
   public static objGet(obj: any, fmt: string, o: any) {
     let v = obj;
-    if (typeof v !== "object") {
+    // if is not object or is null, return default
+    if (typeof v !== "object" || !v) {
       return o;
     }
     const fmts = fmt.split(".");

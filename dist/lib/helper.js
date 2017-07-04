@@ -75,7 +75,8 @@ var Helper = (function () {
     };
     Helper.objGet = function (obj, fmt, o) {
         var v = obj;
-        if (typeof v !== "object") {
+        // if is not object or is null, return default
+        if (typeof v !== "object" || !v) {
             return o;
         }
         var fmts = fmt.split(".");

@@ -252,7 +252,6 @@ var RestMiddleware = (function () {
                         };
                         throw err;
                     }
-                    console.log(arg);
                     preCtrl.arg = arg;
                     return [2 /*return*/, Promise.resolve(preCtrl)];
                 }
