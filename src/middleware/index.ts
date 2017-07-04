@@ -87,9 +87,11 @@ function parseArg(v, de, fmt): IParseArg {
     } else {
       for (const prop in fmt.items.properties) {
         if (fmt.items.properties.hasOwnProperty(prop)) {
-          const tmp = parseArg(v[prop], v[prop], fmt.items.properties[prop]);
-          v[prop] = tmp.arg;
-          errs = errs.concat(tmp.errs);
+          for (const vv of v) {
+            const tmp = parseArg(vv[prop], vv[prop], fmt.items.properties[prop]);
+            vv[prop] = tmp.arg;
+            errs = errs.concat(tmp.errs);
+          }
         }
       }
       if (fmt.items.required && fmt.items.required.length) {

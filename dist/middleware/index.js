@@ -131,18 +131,21 @@ function parseArg(v, de, fmt) {
         else {
             for (var prop in fmt.items.properties) {
                 if (fmt.items.properties.hasOwnProperty(prop)) {
-                    var tmp = parseArg(v[prop], v[prop], fmt.items.properties[prop]);
-                    v[prop] = tmp.arg;
-                    errs = errs.concat(tmp.errs);
+                    for (var _i = 0, v_1 = v; _i < v_1.length; _i++) {
+                        var vv = v_1[_i];
+                        var tmp = parseArg(vv[prop], vv[prop], fmt.items.properties[prop]);
+                        vv[prop] = tmp.arg;
+                        errs = errs.concat(tmp.errs);
+                    }
                 }
             }
             if (fmt.items.required && fmt.items.required.length) {
                 var requires = fmt.items.required;
-                for (var _i = 0, requires_1 = requires; _i < requires_1.length; _i++) {
-                    var ii = requires_1[_i];
+                for (var _a = 0, requires_1 = requires; _a < requires_1.length; _a++) {
+                    var ii = requires_1[_a];
                     var require_1 = ii;
-                    for (var _a = 0, v_1 = v; _a < v_1.length; _a++) {
-                        var jj = v_1[_a];
+                    for (var _b = 0, v_2 = v; _b < v_2.length; _b++) {
+                        var jj = v_2[_b];
                         if (typeof jj[require_1] === "undefined") {
                             errs.push({ field: fmt.name + "." + require_1, type: "required" });
                         }
@@ -249,6 +252,7 @@ var RestMiddleware = (function () {
                         };
                         throw err;
                     }
+                    console.log(arg);
                     preCtrl.arg = arg;
                     return [2 /*return*/, Promise.resolve(preCtrl)];
                 }
