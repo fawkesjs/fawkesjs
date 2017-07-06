@@ -78,20 +78,26 @@ function parseArg(v, de, fmt): IParseArg {
   if (fmt.type === "array") {
     if (!Array.isArray(v)) {
       errs.push({ field: fmt.name, type: "array" });
-    } else if (!fmt.items || !fmt.items.properties) {
+    } else if (!fmt.items) {
       throw notSupportError;
     } else if (fmt.minItems && v.length < fmt.minItems) {
       errs.push({ field: fmt.name, type: "minItems" });
     } else if (fmt.maxItems && v.length > fmt.maxItems) {
       errs.push({ field: fmt.name, type: "maxItems" });
     } else {
-      for (const prop in fmt.items.properties) {
-        if (fmt.items.properties.hasOwnProperty(prop)) {
-          for (const vv of v) {
-            const tmp = parseArg(vv[prop], vv[prop], fmt.items.properties[prop]);
-            vv[prop] = tmp.arg;
-            errs = errs.concat(tmp.errs);
+      if (fmt.items.properties) {
+        for (const prop in fmt.items.properties) {
+          if (fmt.items.properties.hasOwnProperty(prop)) {
+            for (const vv of v) {
+              const tmp = parseArg(vv[prop], vv[prop], fmt.items.properties[prop]);
+              errs = errs.concat(tmp.errs);
+            }
           }
+        }
+      } else {
+        for (const vv of v) {
+          const tmp = parseArg(vv, vv, fmt.items);
+          errs = errs.concat(tmp.errs);
         }
       }
       if (fmt.items.required && fmt.items.required.length) {
