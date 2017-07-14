@@ -14,7 +14,7 @@ export class Helper {
     await t.rollback();
     return Promise.reject(err);
   }
-  public static errCb(err, res) {
+  public static errCb(err, res, req) {
     const theErr = _.clone(err);
     const statusCode = theErr.statusCode ? theErr.statusCode : 500;
     delete theErr.statusCode;

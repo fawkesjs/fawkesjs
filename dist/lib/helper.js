@@ -67,7 +67,7 @@ var Helper = (function () {
             });
         });
     };
-    Helper.errCb = function (err, res) {
+    Helper.errCb = function (err, res, req) {
         var theErr = _.clone(err);
         var statusCode = theErr.statusCode ? theErr.statusCode : 500;
         delete theErr.statusCode;

@@ -107,7 +107,7 @@ var Route = (function () {
                                     return [3 /*break*/, 7];
                                 case 6:
                                     err_1 = _a.sent();
-                                    errHandler(err_1, res);
+                                    errHandler(err_1, res, req);
                                     return [3 /*break*/, 7];
                                 case 7: return [2 /*return*/];
                             }
