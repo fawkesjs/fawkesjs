@@ -60,5 +60,5 @@ export interface IError {
 export interface IRoutesConfig {
     swagger?: boolean;
     preCtrls?: any[];
-    errHandler?(err: any, res: express.Response): any;
+    errHandler?(err: any, res: express.Response, req: express.Request): any;
 }
