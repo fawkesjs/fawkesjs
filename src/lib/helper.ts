@@ -22,12 +22,12 @@ export class Helper {
   }
   public static objGet(obj: any, fmt: string, o: any) {
     let v = obj;
-    // if is not object or is null, return default
-    if (typeof v !== "object" || !v) {
-      return o;
-    }
     const fmts = fmt.split(".");
     for (const theFmt of fmts) {
+      // if is not object or is null, return default
+      if (typeof v !== "object" || !v) {
+        return o;
+      }
       if (typeof v[theFmt] !== "undefined") {
         v = v[theFmt];
       } else {

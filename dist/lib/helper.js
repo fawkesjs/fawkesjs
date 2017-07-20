@@ -75,13 +75,13 @@ var Helper = (function () {
     };
     Helper.objGet = function (obj, fmt, o) {
         var v = obj;
-        // if is not object or is null, return default
-        if (typeof v !== "object" || !v) {
-            return o;
-        }
         var fmts = fmt.split(".");
         for (var _i = 0, fmts_1 = fmts; _i < fmts_1.length; _i++) {
             var theFmt = fmts_1[_i];
+            // if is not object or is null, return default
+            if (typeof v !== "object" || !v) {
+                return o;
+            }
             if (typeof v[theFmt] !== "undefined") {
                 v = v[theFmt];
             }
