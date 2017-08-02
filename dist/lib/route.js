@@ -42,6 +42,7 @@ var Route = (function () {
     function Route() {
     }
     Route.activate = function (app, routes, prefix, routesConfig) {
+        var config = new config_1.Config();
         var _loop_1 = function (route) {
             var remote = route.remote;
             remote = remote.replace("{", ":").replace("}", "");
@@ -55,8 +56,8 @@ var Route = (function () {
                     errHandler = routesConfig.errHandler;
                 }
                 else {
-                    for (var _i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir
-                        + config_1.Config.get().middlewareDir + "/index" + config_1.Config.get().extension); _i < _a.length; _i++) {
+                    for (var _i = 0, _a = helper_1.Helper.globFiles(config.outDir
+                        + config.middlewareDir + "/index" + config.extension); _i < _a.length; _i++) {
                         var o = _a[_i];
                         var tmp = require(path.resolve(o));
                         if (tmp.errHandler) {
@@ -68,8 +69,8 @@ var Route = (function () {
                     preCtrls = routesConfig.preCtrls;
                 }
                 else {
-                    for (var _b = 0, _c = helper_1.Helper.globFiles(config_1.Config.get().outDir
-                        + config_1.Config.get().middlewareDir + "/index" + config_1.Config.get().extension); _b < _c.length; _b++) {
+                    for (var _b = 0, _c = helper_1.Helper.globFiles(config.outDir
+                        + config.middlewareDir + "/index" + config.extension); _b < _c.length; _b++) {
                         var o = _c[_b];
                         var tmp = require(path.resolve(o));
                         if (tmp.preCtrls) {

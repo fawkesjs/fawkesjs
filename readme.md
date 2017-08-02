@@ -27,9 +27,9 @@ npm run tsc:w
 - Restart App: `node .` or `nodemon ./index.js -e ts --watch app`
 
 ## Some Note
-FawkesJs-starter comes default with configuration suits for new project, such as using with postgres, api and web in same project.
+Most of the classes uses in are just functions groups inside classes, thats why you will find that its just static class (and most importantly I cannot find a way to make async await work for non static class method).
 
-However future scaling possibility has been implemented inside our code, just that we believe early optimization is bad and expensive, therefore we will not include that inside FawkesJs-starter.
+For performance critical app, you might find that the latest hyperium/hyper is more suitable for you.
 
 ## Build in structure in this project
 - Express

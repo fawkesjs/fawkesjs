@@ -6,7 +6,6 @@ export declare class Fawkes {
      * express routing base on our route folder
      */
     static activateRoute(app: any): void;
-    static initClass(): void;
     /**
      * initializing our config and orm and returning express app
      */

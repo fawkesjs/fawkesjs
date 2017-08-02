@@ -1,6 +1,9 @@
+import { Config } from "../config";
 export declare class Orm {
-    static init: boolean;
-    static sequelize: any;
-    static models: any;
-    static get(): void;
+    private static singleton;
+    sequelize: any;
+    models: any;
+    constructor(config: Config, option?: {
+        singleton: boolean;
+    });
 }

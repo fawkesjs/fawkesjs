@@ -7,6 +7,7 @@ import { Helper } from "../lib/helper";
 
 export class Route {
   public static activate(app: express.Express, routes: IRoute[], prefix: string, routesConfig: IRoutesConfig) {
+    const config = new Config();
     for (const route of routes) {
       let remote = route.remote;
       remote = remote.replace("{", ":").replace("}", "");
@@ -19,8 +20,8 @@ export class Route {
           } else if (routesConfig.errHandler) {
             errHandler = routesConfig.errHandler;
           } else {
-            for (const o of Helper.globFiles(Config.get().outDir
-            + Config.get().middlewareDir + "/index" + Config.get().extension)) {
+            for (const o of Helper.globFiles(config.outDir
+            + config.middlewareDir + "/index" + config.extension)) {
               const tmp = require(path.resolve(o));
               if (tmp.errHandler) {
                 errHandler = tmp.errHandler;
@@ -30,8 +31,8 @@ export class Route {
           if (routesConfig.preCtrls) {
             preCtrls = routesConfig.preCtrls;
           } else {
-            for (const o of Helper.globFiles(Config.get().outDir
-            + Config.get().middlewareDir + "/index" + Config.get().extension)) {
+            for (const o of Helper.globFiles(config.outDir
+            + config.middlewareDir + "/index" + config.extension)) {
               const tmp = require(path.resolve(o));
               if (tmp.preCtrls) {
                 preCtrls = tmp.preCtrls;

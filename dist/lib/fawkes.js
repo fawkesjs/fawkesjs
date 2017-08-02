@@ -42,7 +42,6 @@ var _ = require("underscore");
 var config_1 = require("../config");
 var helper_1 = require("../lib/helper");
 var route_1 = require("../lib/route");
-var orm_1 = require("../orm");
 /**
  * This is the main class to do config initiation.
  */
@@ -53,8 +52,9 @@ var Fawkes = (function () {
      * express routing base on our route folder
      */
     Fawkes.activateRoute = function (app) {
-        var preRoute = config_1.Config.get().outDir + config_1.Config.get().routeDir;
-        var postRoute = "/index" + config_1.Config.get().extension;
+        var config = new config_1.Config();
+        var preRoute = config.outDir + config.routeDir;
+        var postRoute = "/index" + config.extension;
         for (var _i = 0, _a = helper_1.Helper.globFiles(preRoute + "/**" + postRoute); _i < _a.length; _i++) {
             var route = _a[_i];
             var theRoute = require(path.resolve(route));
@@ -64,17 +64,10 @@ var Fawkes = (function () {
             route_1.Route.activate(app, theRoute.routes, route, routesConfig);
         }
     };
-    Fawkes.initClass = function () {
-        config_1.Config.get();
-        if (typeof config_1.Config.ormDir === "string") {
-            orm_1.Orm.get();
-        }
-    };
     /**
      * initializing our config and orm and returning express app
      */
     Fawkes.app = function () {
-        Fawkes.initClass();
         var app = express();
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
@@ -85,10 +78,11 @@ var Fawkes = (function () {
      */
     Fawkes.generateSwaggerAsync = function (location) {
         return __awaiter(this, void 0, void 0, function () {
-            var preRoute, postRoute, sj, env, _i, _a, o, tmp, _b, _c, o, tmp, _d, _e, route, theRoute;
+            var config, preRoute, postRoute, sj, env, _i, _a, o, tmp, _b, _c, o, tmp, _d, _e, route, theRoute;
             return __generator(this, function (_f) {
-                preRoute = config_1.Config.get().outDir + config_1.Config.get().routeDir;
-                postRoute = "/index" + config_1.Config.get().extension;
+                config = new config_1.Config();
+                preRoute = config.outDir + config.routeDir;
+                postRoute = "/index" + config.extension;
                 sj = {
                     consumes: [
                         "application/json",
@@ -123,14 +117,14 @@ var Fawkes = (function () {
                     swagger: "2.0",
                 };
                 env = process.env.NODE_ENV || "development";
-                for (_i = 0, _a = helper_1.Helper.globFiles(config_1.Config.get().outDir
-                    + config_1.Config.get().configDir + "/swagger" + config_1.Config.get().extension); _i < _a.length; _i++) {
+                for (_i = 0, _a = helper_1.Helper.globFiles(config.outDir
+                    + config.configDir + "/swagger" + config.extension); _i < _a.length; _i++) {
                     o = _a[_i];
                     tmp = require(path.resolve(o));
                     _.extend(sj, tmp);
                 }
-                for (_b = 0, _c = helper_1.Helper.globFiles(config_1.Config.get().outDir + config_1.Config.get().configDir
-                    + "/swagger." + env + config_1.Config.get().extension); _b < _c.length; _b++) {
+                for (_b = 0, _c = helper_1.Helper.globFiles(config.outDir + config.configDir
+                    + "/swagger." + env + config.extension); _b < _c.length; _b++) {
                     o = _c[_b];
                     tmp = require(path.resolve(o));
                     _.extend(sj, tmp);

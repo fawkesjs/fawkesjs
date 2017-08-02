@@ -16,8 +16,9 @@ export class Fawkes {
    * express routing base on our route folder
    */
   public static activateRoute(app) {
-    const preRoute = Config.get().outDir + Config.get().routeDir;
-    const postRoute = "/index" + Config.get().extension;
+    const config = new Config();
+    const preRoute = config.outDir + config.routeDir;
+    const postRoute = "/index" + config.extension;
     for (let route of Helper.globFiles(preRoute + "/**" + postRoute)) {
       const theRoute = require(path.resolve(route));
       route = route.substring(preRoute.length);
@@ -26,17 +27,10 @@ export class Fawkes {
       Route.activate(app, theRoute.routes, route, routesConfig);
     }
   }
-  public static initClass() {
-    Config.get();
-    if (typeof Config.ormDir === "string") {
-      Orm.get();
-    }
-  }
   /**
    * initializing our config and orm and returning express app
    */
   public static app() {
-    Fawkes.initClass();
     const app: express.Express = express();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
@@ -47,8 +41,9 @@ export class Fawkes {
    * for generating swagger document, which is triggered when we call fawkesjs -s ./swagger/swagger.json
    */
   public static async generateSwaggerAsync(location) {
-    const preRoute = Config.get().outDir + Config.get().routeDir;
-    const postRoute = "/index" + Config.get().extension;
+    const config = new Config();
+    const preRoute = config.outDir + config.routeDir;
+    const postRoute = "/index" + config.extension;
 
     const sj = {
       consumes: [
@@ -86,13 +81,13 @@ export class Fawkes {
       swagger: "2.0",
     };
     const env = process.env.NODE_ENV || "development";
-    for (const o of Helper.globFiles(Config.get().outDir
-    + Config.get().configDir + "/swagger" + Config.get().extension)) {
+    for (const o of Helper.globFiles(config.outDir
+    + config.configDir + "/swagger" + config.extension)) {
       const tmp = require(path.resolve(o));
       _.extend(sj, tmp);
     }
-    for (const o of Helper.globFiles(Config.get().outDir + Config.get().configDir
-    + "/swagger." + env + Config.get().extension)) {
+    for (const o of Helper.globFiles(config.outDir + config.configDir
+    + "/swagger." + env + config.extension)) {
       const tmp = require(path.resolve(o));
       _.extend(sj, tmp);
     }

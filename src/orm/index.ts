@@ -5,27 +5,40 @@ import * as _ from "underscore";
 import { Config } from "../config";
 import { Helper } from "../lib/helper";
 
+/**
+ * const orm = new Orm(new Config()) // this create a new instance of Orm
+ * const orm2 = new Orm(new Config(), {singleton: true}) // this create/return a singleton
+ */
 export class Orm {
-  public static init: boolean = false;
-  public static sequelize: any = null;
-  public static models: any = {};
-  public static get() {
-    if (Config.init && !Orm.init && Config.useSequelize !== false) {
-      const config = Config.datasource.db;
-      const sequelize = new Sequelize(config.database, config.username, config.password, config);
-      for (const o of Helper.globFiles(Config.outDir + Config.ormDir + "/index" + Config.extension)) {
-        const m = require(path.resolve(o));
-        for (const ii of m.ormDefinitions) {
-          const model = ii(sequelize);
-          Orm.models[model.name] = model;
-        }
+  private static singleton: Orm;
+  public sequelize: any = null;
+  public models: any = {};
+
+  constructor(config: Config, option?: {singleton: boolean}) {
+    if (Helper.objGet(option, "singleton", false)) {
+      if (typeof Orm.singleton !== "undefined") {
+        return Orm.singleton;
       }
-      Object.keys(Orm.models).forEach((modelName) => {
-        if ("associate" in Orm.models[modelName]) {
-          Orm.models[modelName].associate(Orm.models);
-        }
-      });
-      Orm.sequelize = sequelize;
     }
+    const dbConfig = config.datasource.db;
+    const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, dbConfig);
+    for (const o of Helper.globFiles(config.outDir + config.ormDir + "/index" + config.extension)) {
+      const m = require(path.resolve(o));
+      for (const ii of m.ormDefinitions) {
+        const model = ii(sequelize);
+        this.models[model.name] = model;
+      }
+    }
+    Object.keys(this.models).forEach((modelName) => {
+      if ("associate" in this.models[modelName]) {
+        this.models[modelName].associate(this.models);
+      }
+    });
+    this.sequelize = sequelize;
+
+    if (Helper.objGet(option, "singleton", false)) {
+      Orm.singleton = this;
+    }
+    return this;
   }
 }
