@@ -1,6 +1,10 @@
 "use strict";
 var path = require("path");
 var helper_1 = require("../lib/helper");
+/**
+ * const config = new Config() // this create a new instance of config
+ * const config2 = new Config({singleton: true}); // this create/return a singleton
+ */
 var Config = (function () {
     function Config(option) {
         this.port = 3000;

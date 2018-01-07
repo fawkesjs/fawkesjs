@@ -2,6 +2,10 @@
 var path = require("path");
 var Sequelize = require("sequelize");
 var helper_1 = require("../lib/helper");
+/**
+ * const orm = new Orm(new Config()) // this create a new instance of Orm
+ * const orm2 = new Orm(new Config(), {singleton: true}) // this create/return a singleton
+ */
 var Orm = (function () {
     function Orm(config, option) {
         var _this = this;

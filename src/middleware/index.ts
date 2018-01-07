@@ -29,6 +29,12 @@ function convertion(q, tmp: IRouteParameter) {
   }
   return q;
 }
+/**
+ * TODO: some cleanup on the function, or to seperate this middleware to different package
+ * @param v
+ * @param de
+ * @param fmt
+ */
 function parseArg(v, de, fmt): IParseArg {
   let errs = [];
   if (typeof fmt.default !== "undefined" && typeof v === "undefined") {

@@ -26,8 +26,9 @@ npm run tsc:w
 - Full Migrate DB: `npm run db:sync`
 - Restart App: `node .` or `nodemon ./index.js -e ts --watch app`
 
-## Some Note
-Most of the classes uses in are just functions groups inside classes, thats why you will find that its just static class (and most importantly I cannot find a way to make async await work for non static class method).
+## TODO
+- Remove the usage of most class with static function for better dependency injection
+- Error should be returned as an instance
 
 For performance critical app, you might find that the latest hyperium/hyper is more suitable for you.
 
