@@ -1,11 +1,12 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
 var helper_1 = require("../lib/helper");
 /**
  * const config = new Config() // this create a new instance of config
  * const config2 = new Config({singleton: true}); // this create/return a singleton
  */
-var Config = (function () {
+var Config = /** @class */ (function () {
     function Config(option) {
         this.port = 3000;
         this.outDir = "./app";
@@ -13,7 +14,6 @@ var Config = (function () {
         this.configDir = "/config";
         this.middlewareDir = "/middleware";
         this.routeDir = "/route";
-        this.ormDir = "/orm";
         this.useSequelize = true;
         this.datasource = {
             db: {},

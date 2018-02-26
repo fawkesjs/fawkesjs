@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
 var Sequelize = require("sequelize");
 var helper_1 = require("../lib/helper");
@@ -6,7 +7,7 @@ var helper_1 = require("../lib/helper");
  * const orm = new Orm(new Config()) // this create a new instance of Orm
  * const orm2 = new Orm(new Config(), {singleton: true}) // this create/return a singleton
  */
-var Orm = (function () {
+var Orm = /** @class */ (function () {
     function Orm(config, option) {
         var _this = this;
         this.sequelize = null;

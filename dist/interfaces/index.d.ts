@@ -4,6 +4,7 @@ export interface ICtrl {
     res: express.Response;
     accountId?: string;
     arg: any;
+    di: any;
 }
 export interface IOrm {
     models: any;
@@ -16,6 +17,7 @@ export interface IPreCtrl {
     accountId?: string;
     arg?: any;
     cb: any;
+    di: any;
 }
 export interface IRoute {
     remote: string;

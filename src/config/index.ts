@@ -14,7 +14,6 @@ export class Config {
   public configDir: string = "/config";
   public middlewareDir: string = "/middleware";
   public routeDir: string = "/route";
-  public ormDir: string = "/orm";
   public useSequelize: boolean = true;
   public datasource: any = {
     db: {

@@ -10,7 +10,6 @@ export declare class Config {
     configDir: string;
     middlewareDir: string;
     routeDir: string;
-    ormDir: string;
     useSequelize: boolean;
     datasource: any;
     private configKey;

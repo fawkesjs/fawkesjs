@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var program = require("commander");
 var fawkes_1 = require("../lib/fawkes");
 program

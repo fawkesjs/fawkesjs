@@ -5,6 +5,7 @@ export interface ICtrl {
   res: express.Response;
   accountId?: string;
   arg: any;
+  di: any; // this is passed from the activateRoute
 }
 export interface IOrm {
   models: any;
@@ -17,6 +18,7 @@ export interface IPreCtrl {
   accountId?: string;
   arg?: any;
   cb: any;
+  di: any; // this is passed from the activateRoute
 }
 export interface IRoute {
   remote: string;

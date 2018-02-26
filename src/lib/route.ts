@@ -6,7 +6,7 @@ import { ICtrl, IError, IPreCtrl, IRoute, IRoutesConfig } from "../interfaces";
 import { Helper } from "../lib/helper";
 
 export class Route {
-  public static activate(app: express.Express, routes: IRoute[], prefix: string, routesConfig: IRoutesConfig) {
+  public static activate(app: express.Express, di: any, routes: IRoute[], prefix: string, routesConfig: IRoutesConfig) {
     const config = new Config();
     for (const route of routes) {
       let remote = route.remote;
@@ -41,12 +41,13 @@ export class Route {
           }
           async function doSequence() {
             try {
-              let data: any = { route, req };
+              let data: any = { route, req, di };
               for (const preCtrl of preCtrls) {
                 data = await preCtrl(data);
               }
               delete data.route;
               data.res = res;
+              data.di = di;
               const ctrl: ICtrl = data;
               await route.func(ctrl);
             } catch (err) {

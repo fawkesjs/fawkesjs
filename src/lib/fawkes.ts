@@ -6,7 +6,6 @@ import * as _ from "underscore";
 import { Config } from "../config";
 import { Helper } from "../lib/helper";
 import { Route } from "../lib/route";
-import { Orm } from "../orm";
 
 /**
  * This is the main class to do config initiation.
@@ -15,7 +14,7 @@ export class Fawkes {
   /**
    * express routing base on our route folder
    */
-  public static activateRoute(app) {
+  public static activateRoute(app, di: any) {
     const config = new Config();
     const preRoute = config.outDir + config.routeDir;
     const postRoute = "/index" + config.extension;
@@ -24,19 +23,9 @@ export class Fawkes {
       route = route.substring(preRoute.length);
       route = route.substring(route.length - postRoute.length, -1);
       const routesConfig = theRoute.config || {};
-      Route.activate(app, theRoute.routes, route, routesConfig);
+      Route.activate(app, di, theRoute.routes, route, routesConfig);
     }
   }
-  /**
-   * initializing our config and orm and returning express app
-   */
-  public static app() {
-    const app: express.Express = express();
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
-    return app;
-  }
-
   /**
    * for generating swagger document, which is triggered when we call fawkesjs -s ./swagger/swagger.json
    */

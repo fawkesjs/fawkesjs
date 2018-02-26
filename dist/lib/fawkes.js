@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
-    return { next: verb(0), "throw": verb(1), "return": verb(2) };
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -34,8 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var bodyParser = require("body-parser");
-var express = require("express");
+Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var path = require("path");
 var _ = require("underscore");
@@ -45,13 +44,13 @@ var route_1 = require("../lib/route");
 /**
  * This is the main class to do config initiation.
  */
-var Fawkes = (function () {
+var Fawkes = /** @class */ (function () {
     function Fawkes() {
     }
     /**
      * express routing base on our route folder
      */
-    Fawkes.activateRoute = function (app) {
+    Fawkes.activateRoute = function (app, di) {
         var config = new config_1.Config();
         var preRoute = config.outDir + config.routeDir;
         var postRoute = "/index" + config.extension;
@@ -61,17 +60,8 @@ var Fawkes = (function () {
             route = route.substring(preRoute.length);
             route = route.substring(route.length - postRoute.length, -1);
             var routesConfig = theRoute.config || {};
-            route_1.Route.activate(app, theRoute.routes, route, routesConfig);
+            route_1.Route.activate(app, di, theRoute.routes, route, routesConfig);
         }
-    };
-    /**
-     * initializing our config and orm and returning express app
-     */
-    Fawkes.app = function () {
-        var app = express();
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
-        return app;
     };
     /**
      * for generating swagger document, which is triggered when we call fawkesjs -s ./swagger/swagger.json
