@@ -215,7 +215,7 @@ var RestMiddleware = /** @class */ (function () {
     }
     RestMiddleware.processArgAsync = function (preCtrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var errs, arg, req, route, _i, _a, ii, param, de, tmp_1, tmp, err;
+            var errs, arg, req, route, _i, _a, ii, param, de, tmp, tmp2, err;
             return __generator(this, function (_b) {
                 errs = [];
                 arg = {};
@@ -248,15 +248,15 @@ var RestMiddleware = /** @class */ (function () {
                                     throw notSupportError;
                                 }
                                 else {
-                                    tmp_1 = parseObjectSchema(req.body, param.schema);
-                                    _.extend(arg, tmp_1.arg);
-                                    errs = errs.concat(tmp_1.errs);
+                                    tmp = parseObjectSchema(req.body, param.schema);
+                                    _.extend(arg, tmp.arg);
+                                    errs = errs.concat(tmp.errs);
                                 }
                                 continue;
                             }
-                            tmp = parseArg(arg[param.name], de, param);
-                            arg[param.name] = tmp.arg;
-                            errs = errs.concat(tmp.errs);
+                            tmp2 = parseArg(arg[param.name], de, param);
+                            arg[param.name] = tmp2.arg;
+                            errs = errs.concat(tmp2.errs);
                         }
                     }
                     if (errs.length) {

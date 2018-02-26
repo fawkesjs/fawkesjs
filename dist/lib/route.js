@@ -126,22 +126,22 @@ var Route = /** @class */ (function () {
         }
     };
     Route.swagger = function (routes, prefix) {
-        var path = {};
+        var thePath = {};
         for (var _i = 0, routes_2 = routes; _i < routes_2.length; _i++) {
             var route = routes_2[_i];
             if (route.swagger === false) {
                 continue;
             }
             var remote = route.remote;
-            if (!path[prefix + remote]) {
-                path[prefix + remote] = {};
+            if (!thePath[prefix + remote]) {
+                thePath[prefix + remote] = {};
             }
             var tmp = (remote[0] === "/") ? remote.substr(1) : remote;
             var tmp2 = (prefix[0] === "/") ? prefix.substr(1) : prefix;
             tmp = tmp.substr(0, tmp.indexOf("/"));
             var tag = tmp.length ? tmp2 + "/" + tmp : tmp2;
             tag = tag.replace("/", "_");
-            path[prefix + remote][route.method] = {
+            thePath[prefix + remote][route.method] = {
                 consumes: [
                     "application/json",
                 ],
@@ -162,13 +162,13 @@ var Route = /** @class */ (function () {
                 tags: [tag],
             };
             if (route.parameters) {
-                path[prefix + remote][route.method].parameters = route.parameters;
+                thePath[prefix + remote][route.method].parameters = route.parameters;
             }
             if (route.swagger) {
-                _.extend(path[prefix + remote][route.method], route.swagger);
+                _.extend(thePath[prefix + remote][route.method], route.swagger);
             }
         }
-        return path;
+        return thePath;
     };
     return Route;
 }());
