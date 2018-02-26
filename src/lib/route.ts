@@ -60,21 +60,21 @@ export class Route {
     }
   }
   public static swagger(routes: IRoute[], prefix: string) {
-    const path = {};
+    const thePath = {};
     for (const route of routes) {
       if (route.swagger === false) {
         continue;
       }
       const remote = route.remote;
-      if (!path[prefix + remote]) {
-        path[prefix + remote] = {};
+      if (!thePath[prefix + remote]) {
+        thePath[prefix + remote] = {};
       }
       let tmp = (remote[0] === "/") ? remote.substr(1) : remote;
       const tmp2 = (prefix[0] === "/") ? prefix.substr(1) : prefix;
       tmp = tmp.substr(0, tmp.indexOf("/"));
       let tag = tmp.length ? tmp2 + "/" + tmp : tmp2;
       tag = tag.replace("/", "_");
-      path[prefix + remote][route.method] = {
+      thePath[prefix + remote][route.method] = {
         consumes : [
           "application/json",
         ],
@@ -95,12 +95,12 @@ export class Route {
         tags: [tag],
       };
       if (route.parameters) {
-        path[prefix + remote][route.method].parameters = route.parameters;
+        thePath[prefix + remote][route.method].parameters = route.parameters;
       }
       if (route.swagger) {
-        _.extend(path[prefix + remote][route.method], route.swagger);
+        _.extend(thePath[prefix + remote][route.method], route.swagger);
       }
     }
-    return path;
+    return thePath;
   }
 }

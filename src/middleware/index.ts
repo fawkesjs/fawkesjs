@@ -194,9 +194,9 @@ export class RestMiddleware {
             }
             continue;
           }
-          const tmp = parseArg(arg[param.name], de, param);
-          arg[param.name] = tmp.arg;
-          errs = errs.concat(tmp.errs);
+          const tmp2 = parseArg(arg[param.name], de, param);
+          arg[param.name] = tmp2.arg;
+          errs = errs.concat(tmp2.errs);
         }
       }
       if (errs.length) {
