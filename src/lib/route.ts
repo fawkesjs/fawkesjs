@@ -51,7 +51,7 @@ export class Route {
               const ctrl: ICtrl = data;
               await route.func(ctrl);
             } catch (err) {
-              errHandler(err, res, req);
+              errHandler(err, res, req, di);
             }
           }
           doSequence();
