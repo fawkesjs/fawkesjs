@@ -1,16 +1,14 @@
 import * as _ from "underscore";
 import * as validator from "validator";
 import { IError, IPreCtrl, IRoute, IRouteParameter } from "../interfaces";
+import { BaseError } from "../lib/baseError";
 import { ErrorCode } from "../ref";
 const numberTypes = ["integer", "number"];
 export interface IParseArg {
   arg: any;
   errs: any[];
 }
-const notSupportError: IError = {
-  errorCode: ErrorCode.REST_PARAM_NOT_SUPPORTED,
-  statusCode: 400,
-};
+const notSupportError = new BaseError(ErrorCode.REST_PARAM_NOT_SUPPORTED, 400);
 function isInt(n) {
   return n % 1 === 0;
 }
@@ -200,12 +198,8 @@ export class RestMiddleware {
         }
       }
       if (errs.length) {
-        const err: IError = {
-          data: errs,
-          errorCode: ErrorCode.REST_PARAM_ERROR,
-          statusCode: 400,
-        };
-        throw err;
+        const restParamError = new BaseError(ErrorCode.REST_PARAM_ERROR, 400, errs);
+        throw restParamError;
       }
       preCtrl.arg = arg;
       return Promise.resolve(preCtrl);

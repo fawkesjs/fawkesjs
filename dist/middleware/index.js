@@ -37,12 +37,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var _ = require("underscore");
 var validator = require("validator");
+var baseError_1 = require("../lib/baseError");
 var ref_1 = require("../ref");
 var numberTypes = ["integer", "number"];
-var notSupportError = {
-    errorCode: ref_1.ErrorCode.REST_PARAM_NOT_SUPPORTED,
-    statusCode: 400,
-};
+var notSupportError = new baseError_1.BaseError(ref_1.ErrorCode.REST_PARAM_NOT_SUPPORTED, 400);
 function isInt(n) {
     return n % 1 === 0;
 }
@@ -215,7 +213,7 @@ var RestMiddleware = /** @class */ (function () {
     }
     RestMiddleware.processArgAsync = function (preCtrl) {
         return __awaiter(this, void 0, void 0, function () {
-            var errs, arg, req, route, _i, _a, ii, param, de, tmp, tmp2, err;
+            var errs, arg, req, route, _i, _a, ii, param, de, tmp, tmp2, restParamError;
             return __generator(this, function (_b) {
                 errs = [];
                 arg = {};
@@ -260,12 +258,8 @@ var RestMiddleware = /** @class */ (function () {
                         }
                     }
                     if (errs.length) {
-                        err = {
-                            data: errs,
-                            errorCode: ref_1.ErrorCode.REST_PARAM_ERROR,
-                            statusCode: 400,
-                        };
-                        throw err;
+                        restParamError = new baseError_1.BaseError(ref_1.ErrorCode.REST_PARAM_ERROR, 400, errs);
+                        throw restParamError;
                     }
                     preCtrl.arg = arg;
                     return [2 /*return*/, Promise.resolve(preCtrl)];

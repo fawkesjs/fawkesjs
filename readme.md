@@ -29,7 +29,6 @@ npm run watch
 
 ## TODO
 - Remove the usage of most class with static function for better dependency injection
-- Error should be returned as an instance
 
 For performance critical app, you might find that the latest hyperium/hyper is more suitable for you.
 

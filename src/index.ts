@@ -1,3 +1,4 @@
+export { BaseError } from "./lib/baseError";
 export { Fawkes } from "./lib/fawkes";
 export { Helper } from "./lib/helper";
 export { ICtrl, IRoute, IError, IPreCtrl, IRoutesConfig, IRouteParameter } from "./interfaces";

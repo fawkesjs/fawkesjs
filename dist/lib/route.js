@@ -110,7 +110,7 @@ var Route = /** @class */ (function () {
                                     return [3 /*break*/, 7];
                                 case 6:
                                     err_1 = _a.sent();
-                                    errHandler(err_1, res, req);
+                                    errHandler(err_1, res, req, di);
                                     return [3 /*break*/, 7];
                                 case 7: return [2 /*return*/];
                             }

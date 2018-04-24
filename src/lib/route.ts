@@ -2,7 +2,7 @@ import * as express from "express";
 import * as path from "path";
 import * as _ from "underscore";
 import { Config } from "../config";
-import { ICtrl, IError, IPreCtrl, IRoute, IRoutesConfig } from "../interfaces";
+import { ICtrl, IPreCtrl, IRoute, IRoutesConfig } from "../interfaces";
 import { Helper } from "../lib/helper";
 
 export class Route {

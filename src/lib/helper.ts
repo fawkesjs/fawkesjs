@@ -1,6 +1,7 @@
 import { sync } from "glob";
 import { union } from "lodash";
 import * as _ from "underscore";
+import { BaseError } from "../lib/baseError";
 
 export class Helper {
   public static globFiles(location: string): string[] {
@@ -15,9 +16,19 @@ export class Helper {
     return Promise.reject(err);
   }
   public static errCb(err, res, req, di) {
-    const theErr = _.clone(err);
-    const statusCode = theErr.statusCode ? theErr.statusCode : 500;
-    delete theErr.statusCode;
+    let theErr;
+    if (err instanceof BaseError) {
+      theErr = {
+        data: err.data,
+        errorCode: typeof err.errorCode === "number" ? err.errorCode : 0,
+      };
+    } else {
+      theErr = {
+        errorCode: typeof err === "object" && typeof err.errorCode === "number" ? err.errorCode : 0,
+      };
+    }
+    const statusCode = typeof err === "object" && typeof err.statusCode === "number" ?
+      err.statusCode : 500;
     res.status(statusCode).json(theErr);
   }
   public static objGet(obj: any, fmt: string, o: any) {

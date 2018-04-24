@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var glob_1 = require("glob");
 var lodash_1 = require("lodash");
-var _ = require("underscore");
+var baseError_1 = require("../lib/baseError");
 var Helper = /** @class */ (function () {
     function Helper() {
     }
@@ -68,10 +68,20 @@ var Helper = /** @class */ (function () {
             });
         });
     };
-    Helper.errCb = function (err, res, req) {
-        var theErr = _.clone(err);
-        var statusCode = theErr.statusCode ? theErr.statusCode : 500;
-        delete theErr.statusCode;
+    Helper.errCb = function (err, res, req, di) {
+        var theErr;
+        if (err instanceof baseError_1.BaseError) {
+            theErr = {
+                data: err.data,
+                errorCode: typeof err.statusCode === "number" ? err.statusCode : 0,
+            };
+        }
+        else {
+            theErr = {
+                errorCode: typeof err.statusCode === "number" ? err.statusCode : 0,
+            };
+        }
+        var statusCode = typeof err.statusCode === "number" ? typeof err.statusCode === "number" : 500;
         res.status(statusCode).json(theErr);
     };
     Helper.objGet = function (obj, fmt, o) {

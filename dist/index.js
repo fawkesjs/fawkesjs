@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var baseError_1 = require("./lib/baseError");
+exports.BaseError = baseError_1.BaseError;
 var fawkes_1 = require("./lib/fawkes");
 exports.Fawkes = fawkes_1.Fawkes;
 var helper_1 = require("./lib/helper");
