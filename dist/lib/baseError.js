@@ -16,8 +16,6 @@ var BaseError = /** @class */ (function (_super) {
         var _this = 
         // Calling parent constructor of base Error class.
         _super.call(this, "Error Code: " + errorCode) || this;
-        // Saving class name in the property of our custom error as a shortcut.
-        _this.name = _this.constructor.name;
         // Capturing stack trace, excluding constructor call from it.
         Error.captureStackTrace(_this, _this.constructor);
         _this.statusCode = statusCode || 500;

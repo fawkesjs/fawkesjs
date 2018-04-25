@@ -73,15 +73,16 @@ var Helper = /** @class */ (function () {
         if (err instanceof baseError_1.BaseError) {
             theErr = {
                 data: err.data,
-                errorCode: typeof err.statusCode === "number" ? err.statusCode : 0,
+                errorCode: typeof err.errorCode === "number" ? err.errorCode : 0,
             };
         }
         else {
             theErr = {
-                errorCode: typeof err.statusCode === "number" ? err.statusCode : 0,
+                errorCode: typeof err === "object" && typeof err.errorCode === "number" ? err.errorCode : 0,
             };
         }
-        var statusCode = typeof err.statusCode === "number" ? typeof err.statusCode === "number" : 500;
+        var statusCode = typeof err === "object" && typeof err.statusCode === "number" ?
+            err.statusCode : 500;
         res.status(statusCode).json(theErr);
     };
     Helper.objGet = function (obj, fmt, o) {

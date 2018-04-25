@@ -1,3 +1,6 @@
+# NOTICE
+This project is no longer under development, a combination of [Koa](http://koajs.com/) with [GraphQL](https://graphql.org/) can achieve a similar functionality.
+
 ## FawkesJs
 > FawkesJs is a Javascript framework that is built on top of express, typescript and MVC structure.
 > Inspired by Laravel and Loopback, the target of the framework is to make Javascript development even easier.
